@@ -1,5 +1,11 @@
+/*
+ * Implementation of functions to deal with 4x4 matrices of floats.
+ *
+ * Originally written by Fogleman (github.com/fogleman/craft).
+ * Modified by Max Hanson, December 2019.
+ */
+
 #include <math.h>
-#include "config.h"
 #include "matrix.h"
 #include "util.h"
 

@@ -10,4 +10,4 @@ include_directories(deps/glew/include)
 
 add_executable(cubes ${SOURCE_FILES})
 #add_executable(cubes src/main.c src/util.c)
-target_link_libraries(cubes glfw glew)
+target_link_libraries(cubes glfw glew m)
