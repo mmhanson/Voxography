@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -7,6 +8,7 @@ int main()
     GLFWwindow* window;
     GLuint VertexArrayID;
 
+    // initialize glfw
     if (!glfwInit())
     {
         fprintf(stderr, "Failed to initialize glfw.\n");
@@ -25,6 +27,13 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
+
+    // initialize glew
+    if (glewInit() != GLEW_OK)
+    {
+        fprintf(stderr, "Failed to initialize glew.\n");
+        return -1;
+    }
 
     // create triangle VAO (vtx array obj)
     glGenVertexArrays(1, &VertexArrayID);
