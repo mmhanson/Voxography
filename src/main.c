@@ -6,6 +6,9 @@
 #include "util.h"
 #include "matrix.h"
 
+#define WIDTH 1024
+#define HEIGHT 768
+
 int main()
 {
     GLFWwindow* window;
@@ -23,7 +26,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     // create window
-    window = glfwCreateWindow(1024, 768, "My Window", 0, 0);
+    window = glfwCreateWindow(WIDTH, HEIGHT, "My Window", 0, 0);
     if (!window)
     {
         fprintf(stderr, "Failed to create window.\n");
@@ -57,7 +60,20 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
     // LOAD SHADERS //
-    GLuint program = load_program("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+    GLuint programID = load_program("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+
+    // MAKE MVP MATRIX //
+    float mvp_matrix[16];
+    float cam_x = 4;
+    float cam_y = 3;
+    float cam_z = 3;
+    float cam_rx = 0;
+    float cam_ry = 0;
+    float fov = 45.0f; // radians?
+    int rad = 120;
+    set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_x, cam_y, cam_z,
+                  cam_rx, cam_ry, fov, 0, rad);
+    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
     // gameloop
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -67,7 +83,7 @@ int main()
 
         // === draw triangle === 
         // use shaders
-        glUseProgram(program);
+        glUseProgram(programID);
         // 1st attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
