@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-//#include <glm/glm.h>
 
 int main()
 {
@@ -28,10 +27,8 @@ int main()
     glfwMakeContextCurrent(window);
 
     // create triangle VAO (vtx array obj)
-    /*
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
-    */
 
     // gameloop
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
