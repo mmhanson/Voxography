@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "util.h"
+
 int main()
 {
     GLFWwindow* window;
@@ -53,13 +55,18 @@ int main()
     // Give our vertices to OpenGL.
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
+    // LOAD SHADERS //
+    GLuint program = load_program("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+
     // gameloop
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     do
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // === draw triangle === 
+        // use shaders
+        glUseProgram(program);
         // 1st attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
