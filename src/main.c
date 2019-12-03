@@ -1,10 +1,12 @@
 #include <stdio.h>
-//#include <GL/glew.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+//#include <glm/glm.h>
 
 int main()
 {
     GLFWwindow* window;
+    GLuint VertexArrayID;
 
     if (!glfwInit())
     {
@@ -16,15 +18,23 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
+    // create window
     window = glfwCreateWindow(640, 480, "My Window", 0, 0);
     if (!window)
     {
-        // window creation failed
+        fprintf(stderr, "Failed to create window.\n");
+        return -1;
     }
     glfwMakeContextCurrent(window);
 
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    // create triangle VAO (vtx array obj)
+    /*
+    glGenVertexArrays(1, &VertexArrayID);
+    glBindVertexArray(VertexArrayID);
+    */
 
+    // gameloop
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     do
     {
         glfwSwapBuffers(window);
