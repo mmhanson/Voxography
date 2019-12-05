@@ -169,6 +169,11 @@ int main()
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, mvp_matrix);
 
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
+    // Accept fragment if it closer to the camera than the former one
+    glDepthFunc(GL_LESS);
+
     // gameloop
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     do
