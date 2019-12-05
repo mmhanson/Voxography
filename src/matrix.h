@@ -21,6 +21,9 @@ void mat_identity(float *matrix);
 
 /*
  * Create a translation matrix.
+ *
+ * Translates vertices @dx units to the right, @dy units up, and
+ * @dz units [out of the screen?].
  */
 void mat_translate(float *matrix, float dx, float dy, float dz);
 
