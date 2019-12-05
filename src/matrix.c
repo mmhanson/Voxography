@@ -183,7 +183,8 @@ void mat_perspective(
     float znear, float zfar)
 {
     float ymax, xmax;
-    ymax = znear * tanf(fov * PI / 360.0);
+    //ymax = znear * tanf(fov * PI / 180.0); // for fov in degrees
+    ymax = znear * tanf(fov); // for fov in radians
     xmax = ymax * aspect;
     mat_frustum(matrix, -xmax, xmax, -ymax, ymax, znear, zfar);
 }
@@ -223,7 +224,10 @@ void set_matrix_3d(
     float b[16];
     float aspect = (float)width / height;
     float znear = 0.125;
-    float zfar = radius * 32 + 64;
+    // radius is how many blocks (32 camera coordinate units) on top of the min
+    // (2 blocks) to view
+    //float zfar = radius * 32 + 64;
+    float zfar = radius; // use camera coords for now
     mat_identity(a);
     mat_translate(b, -x, -y, -z);
     mat_multiply(a, b, a);

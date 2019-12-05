@@ -61,6 +61,10 @@ void mat_frustum(
 
 /*
  * Create a perspective projection matrix.
+ *
+ * @fov: field of view in radians.
+ * @aspect: aspect ratio of window
+ * @near @far: render objects in (@near->@far], in camera-coord units.
  */
 void mat_perspective(
     float *matrix, float fov, float aspect,
@@ -81,16 +85,21 @@ void set_matrix_2d(float *matrix, int width, int height);
 /*
  * Create a 3d MVP matrix.
  *
- * @width: width of image plane to project onto.
- * @height: height of image plane to project onto.
- * @x: x of camera.
- * @y: y of camera.
- * @z: z of camera.
- * @rx: rotation in x direction of camera.
- * @ry: rotation in y direction of camera.
- * @fov: field of view. In radians.
+ * Note: width and height are combined to make the aspect ratio:
+ * `aspect = width/height`. Using the width/height of the window in pixels will
+ * work, but you can also use any other equivalent ratio.
+ *
+ * @width: width of the window in pixels.
+ * @height: height of the window in pixels.
+ * @x: x of camera. (in camera-coord units).
+ * @y: y of camera. (in camera-coord units).
+ * @z: z of camera. (in camera-coord units).
+ * @rx: rotation in x direction of camera. Rotates the camera left in radians.
+ * @ry: rotation in y direction of camera. Rotates the camera up in radians.
+ * @fov: (whole) field of view. In radians.
  * @ortho: orthogonal projection (1) or perspective projection (0).
- * @radius: render radius. How far from camera to render.
+ * @radius: render radius. How far from camera to render (in camera-coord units).
+ *   display region will be (0.125->radius].
  */
 void set_matrix_3d(
     float *matrix, int width, int height,

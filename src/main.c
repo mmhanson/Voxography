@@ -64,17 +64,15 @@ int main()
 
     // MAKE MVP MATRIX //
     float mvp_matrix[16];
-    float cam_x = 1;
-    float cam_y = 0;
-    float cam_z = 200;
-    float cam_rx = PI * -0.001f;
+    float cam_x = 0.8;
+    float cam_y = 0.2;
+    float cam_z = 1.5;
+    float cam_rx = PI * -0.125;
     float cam_ry = 0.000f;
-    float fov = PI * 0.25f;
-    int rad = 10;
+    float fov = PI * 0.25f; // 45 degree FOV
+    int rad = 40;
     set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_x, cam_y, cam_z,
                   cam_rx, cam_ry, fov, 0, rad);
-    //mat_translate(mvp_matrix, 0.5, 0.5, 0.0);
-    //mat_identity(mvp_matrix);
     // use shaders
     glUseProgram(programID);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
