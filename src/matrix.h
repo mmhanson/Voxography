@@ -85,7 +85,7 @@ void set_matrix_2d(float *matrix, int width, int height);
  * @z: z of camera.
  * @rx: rotation in x direction of camera.
  * @ry: rotation in y direction of camera.
- * @fov: field of view.
+ * @fov: field of view. In radians.
  * @ortho: orthogonal projection (1) or perspective projection (0).
  * @radius: render radius. How far from camera to render.
  */

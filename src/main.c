@@ -64,16 +64,23 @@ int main()
 
     // MAKE MVP MATRIX //
     float mvp_matrix[16];
-    float cam_x = 4;
-    float cam_y = 3;
-    float cam_z = 3;
+    float cam_x = 0;
+    float cam_y = 0;
+    float cam_z = -3;
     float cam_rx = 0;
     float cam_ry = 0;
-    float fov = 45.0f; // radians?
+    float fov = PI;
     int rad = 120;
+    /*
     set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_x, cam_y, cam_z,
                   cam_rx, cam_ry, fov, 0, rad);
+    */
+    //mat_translate(mvp_matrix, 0.0, 0.0, 0.0);
+    // use shaders
+    glUseProgram(programID);
+    mat_identity(mvp_matrix);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, mvp_matrix);
 
     // gameloop
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -82,8 +89,6 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // === draw triangle === 
-        // use shaders
-        glUseProgram(programID);
         // 1st attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
