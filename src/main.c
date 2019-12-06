@@ -246,7 +246,7 @@ void update_camera(float* p, float* rx, float* ry)
 
     glfwGetCursorPos(w, &mouse_x, &mouse_y);
     glfwSetCursorPos(w, WIDTH / 2, HEIGHT / 2);
-    delta_x = (WIDTH / 2) - (float)mouse_x;
+    delta_x = (float)mouse_x - (WIDTH / 2);
     delta_y = (HEIGHT / 2) - (float)mouse_y;
     current_time = (float)glfwGetTime();
     delta_t = current_time - prev_time;
