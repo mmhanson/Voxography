@@ -24,11 +24,19 @@ void vec_multiply(float* dst, const float c, const float* v);
 
 /*
  * Add two vectors of 3 floats.
- * dst = u * v
+ * dst = u + v
  *
- * @dst: vector of 3 floats to store result of multiplying @v by @u.
+ * @dst: vector of 3 floats to store result of adding @v by @u.
  */
 void vec_add(float* dst, const float* u, const float* v);
+
+/*
+ * Subtract two vectors of 3 floats.
+ * dst = u - v
+ *
+ * @dst: vector of 3 floats to store result of subtracting @v by @u.
+ */
+void vec_sub(float* dst, const float* u, const float* v);
 
 /*
  * Create a 4x4 identity matrix.

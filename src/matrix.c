@@ -30,6 +30,13 @@ void vec_add(float* dst, const float* u, const float* v)
     dst[2] = u[2] + v[2];
 }
 
+void vec_sub(float* dst, const float* u, const float* v)
+{
+    dst[0] = u[0] - v[0];
+    dst[1] = u[1] - v[1];
+    dst[2] = u[2] - v[2];
+}
+
 void mat_identity(float *matrix) {
     matrix[0] = 1;
     matrix[1] = 0;

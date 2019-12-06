@@ -255,6 +255,12 @@ void update_camera(float* p, float* rx, float* ry)
         vec_multiply(tmp, delta_t * walk_speed, f);
         vec_add(p, p, tmp);
     }
+    if (glfwGetKey(w, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        // p = p - (d * delta_t * speed)
+        vec_multiply(tmp, delta_t * walk_speed, f);
+        vec_sub(p, p, tmp);
+    }
 
     // UPDATE LOOK DIRECTION //
     *rx += mouse_speed * delta_t * delta_x;
@@ -262,8 +268,7 @@ void update_camera(float* p, float* rx, float* ry)
 
     // UPDATE FORWARD VEC //
     f[0] = sinf(*rx);
-    //f[1] = 0.0f;
-    f[1] = sinf(*ry);
+    f[1] = sinf(*ry); // to make movement horizontal, set to 0
     f[2] = -1.0f * cosf(*rx);
     normalize(&f[0], &f[1], &f[2]);
 }
