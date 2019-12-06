@@ -1,17 +1,24 @@
 #include <stdio.h>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include "util.h"
 #include "matrix.h"
 
 #define WIDTH 1024
 #define HEIGHT 768
 
+/*
+ * Update the camera's position based on by current input.
+ *
+ * @x @y @z: point to the current x, y, z of the camera. Will be updated.
+ * @rx @ry: point to the current rx, ry of camera. Will be updated.
+ */
+void update_camera(float* x, float* y, float* z, float* rx, float* ry);
+
+GLFWwindow* w;
+
 int main()
 {
-    GLFWwindow* window;
     GLuint VertexArrayID;
 
     // initialize glfw
@@ -26,13 +33,13 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     // create window
-    window = glfwCreateWindow(WIDTH, HEIGHT, "My Window", 0, 0);
-    if (!window)
+    w = glfwCreateWindow(WIDTH, HEIGHT, "My Window", 0, 0);
+    if (!w)
     {
         fprintf(stderr, "Failed to create window.\n");
         return -1;
     }
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(w);
 
     // initialize glew
     if (glewInit() != GLEW_OK)
@@ -162,12 +169,10 @@ int main()
     float cam_ry = PI * -0.1f;
     float fov = PI * 0.25f; // 45 degree FOV
     int rad = 40;
-    set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_x, cam_y, cam_z,
-                  cam_rx, cam_ry, fov, 0, rad);
+
     // use shaders
     glUseProgram(programID);
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, mvp_matrix);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -175,10 +180,16 @@ int main()
     glDepthFunc(GL_LESS);
 
     // gameloop
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glfwSetInputMode(w, GLFW_STICKY_KEYS, GL_TRUE);
     do
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // UPDATE THE CAMERA //
+        update_camera(&cam_x, &cam_y, &cam_z, &cam_rx, &cam_ry);
+        set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_x, cam_y, cam_z,
+                      cam_rx, cam_ry, fov, 0, rad);
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, mvp_matrix);
 
         // === draw triangle === 
         // 1st attribute buffer : vertices
@@ -207,9 +218,46 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12 triangles, 3 vtxs ea
         glDisableVertexAttribArray(0);
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(w);
         glfwPollEvents();
     }
-    while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-           glfwWindowShouldClose(window) == 0);
+    while (glfwGetKey(w, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+           glfwWindowShouldClose(w) == 0);
 }
+
+void update_camera(float* x, float* y, float* z, float* rx, float* ry)
+{
+    static float prev_time = 0.0f;
+    const float mouse_speed = 0.1f; // how fast camera rotates
+    float current_time;
+    float delta_x;
+    float delta_y;
+    float delta_t;
+    double mouse_x;
+    double mouse_y;
+
+    glfwGetCursorPos(w, &mouse_x, &mouse_y);
+    glfwSetCursorPos(w, WIDTH / 2, HEIGHT / 2);
+    delta_x = (WIDTH / 2) - (float)mouse_x;
+    delta_y = (HEIGHT / 2) - (float)mouse_y;
+    current_time = (float)glfwGetTime();
+    delta_t = current_time - prev_time;
+    prev_time = current_time;
+
+    *rx += mouse_speed * delta_t * delta_x;
+    *ry += mouse_speed * delta_t * delta_y;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
