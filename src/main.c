@@ -15,6 +15,14 @@
 #define BLOCK_VERTEX_SHADER_PATH "shaders/vertex_shader.glsl"
 #define BLOCK_FRAGMENT_SHADER_PATH "shaders/fragment_shader.glsl"
 #define MATRIX_SHADER_NAME "MVP"
+// 12 triangles, 3 vtxs each -> 36 vtxs
+#define VTXS_PER_BLOCK 36
+
+#define COPY_VERTEX(p, vertex_data);             \
+    vertex_data[0] = p[0];                      \
+    vertex_data[1] = p[1];                      \
+    vertex_data[2] = p[2];                      \
+    vertex_data = vertex_data + 3;
 
 /*
  * Update the camera's position based on by current input.
@@ -27,11 +35,22 @@ void update_camera(float* p, float* rx, float* ry);
  * Initialize GLFW, create the window (@w), and initialize GLEW.
  */
 void init_opengl();
+/*
+ * Compute the vertices for the triangles of a block.
+ *
+ * @a: array of 3 ints, position of vertex of the block most in the
+ *   z- direction, the y+ direction, and x- direction. Its the topmost,
+ *   northwest vtx of the block.
+ * @vertex_data: array of 108 floats. Will contain triangle vertices.
+ */
+void comp_block_vertex_data(const int* a, float* vertex_data);
 
 GLFWwindow* w;
 
 int main()
 {
+    static GLfloat vertex_data[108]; // array of vtxs for one block
+    const int block_coord[3] = {0, 0, 0};
     GLuint vertex_array;
     GLuint block_shaders_id;
     GLuint vertex_buffer_id;
@@ -40,55 +59,14 @@ int main()
 
     // camera information
     float matrix[16];
-    float cam_p[3] = {0.0f, 0.0f, 5.0f};
+    float cam_p[3] = {0.0f, 0.0f, 2.0f};
     float cam_rx = 0.0f;
     float cam_ry = 0.0f;
     int rad = 40;
 
     init_opengl();
 
-    // === cube stuff ===
-    // cube
-    // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-    // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-    static const GLfloat vertex_data[] = {
-        -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-        -1.0f,-1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f, // triangle 1 : end
-        1.0f, 1.0f,-1.0f, // triangle 2 : begin
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f, // triangle 2 : end
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f
-    };
+    comp_block_vertex_data(block_coord, vertex_data);
     // One color for each vertex. They were generated randomly.
     static const GLfloat color_data[] = {
         0.583f,  0.771f,  0.014f,
@@ -186,7 +164,7 @@ int main()
             (void*)0                          // array buffer offset
             );
         // Draw the triangle !
-        glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12 triangles, 3 vtxs ea
+        glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
         glDisableVertexAttribArray(0);
 
         glfwSwapBuffers(w);
@@ -297,4 +275,61 @@ void init_opengl()
     glDepthFunc(GL_LESS);
 
     glfwSetInputMode(w, GLFW_STICKY_KEYS, GL_TRUE);
+}
+
+void comp_block_vertex_data(const int* a, float* vertex_data)
+{
+    // TODO use VBO indexing
+    // see notebook p.79 for drawings. Transfer in when finalized.
+    const int vertex_data_size = 108;
+    const int b[3] = {a[0]+1, a[1]  , a[2]  };
+    const int c[3] = {a[0]  , a[1]  , a[2]+1};
+    const int d[3] = {a[0]+1, a[1]  , a[2]+1};
+    const int e[3] = {a[0]  , a[1]-1, a[2]  };
+    const int f[3] = {a[0]+1, a[1]-1, a[2]  };
+    const int g[3] = {a[0]  , a[1]-1, a[2]+1};
+    const int h[3] = {a[0]+1, a[1]-1, a[2]+1};
+
+    // face 1
+    COPY_VERTEX(a, vertex_data); // a-b-e
+    COPY_VERTEX(b, vertex_data);
+    COPY_VERTEX(e, vertex_data);
+    COPY_VERTEX(e, vertex_data); // e-f-b
+    COPY_VERTEX(f, vertex_data);
+    COPY_VERTEX(b, vertex_data);
+    // face 2
+    COPY_VERTEX(a, vertex_data); // a-c-e
+    COPY_VERTEX(c, vertex_data);
+    COPY_VERTEX(e, vertex_data);
+    COPY_VERTEX(e, vertex_data); // e-g-c
+    COPY_VERTEX(g, vertex_data);
+    COPY_VERTEX(c, vertex_data);
+    // face 3
+    COPY_VERTEX(c, vertex_data); // c-d-g
+    COPY_VERTEX(d, vertex_data);
+    COPY_VERTEX(g, vertex_data);
+    COPY_VERTEX(g, vertex_data); // g-h-d
+    COPY_VERTEX(h, vertex_data);
+    COPY_VERTEX(d, vertex_data);
+    // face 4
+    COPY_VERTEX(b, vertex_data); // b-d-h
+    COPY_VERTEX(d, vertex_data);
+    COPY_VERTEX(h, vertex_data);
+    COPY_VERTEX(f, vertex_data); // f-h-b
+    COPY_VERTEX(h, vertex_data);
+    COPY_VERTEX(b, vertex_data);
+    // face 5
+    COPY_VERTEX(a, vertex_data); // a-c-b
+    COPY_VERTEX(c, vertex_data);
+    COPY_VERTEX(b, vertex_data);
+    COPY_VERTEX(b, vertex_data); // b-d-c
+    COPY_VERTEX(d, vertex_data);
+    COPY_VERTEX(c, vertex_data);
+    // face 6
+    COPY_VERTEX(e, vertex_data); // e-f-g
+    COPY_VERTEX(f, vertex_data);
+    COPY_VERTEX(g, vertex_data);
+    COPY_VERTEX(g, vertex_data); // g-f-h
+    COPY_VERTEX(f, vertex_data);
+    COPY_VERTEX(h, vertex_data);
 }
