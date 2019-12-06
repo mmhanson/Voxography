@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -162,11 +163,13 @@ int main()
 
     // MAKE MVP MATRIX //
     float mvp_matrix[16];
-    float cam_x = 5.0;
-    float cam_y = 2.0;
-    float cam_z = 3;
-    float cam_rx = PI * -0.3f;
-    float cam_ry = PI * -0.1f;
+    float cam_x = 0.0f;
+    float cam_y = 0.0f;
+    float cam_z = 5.0f;
+    //float cam_rx = PI * -0.3f;
+    //float cam_ry = PI * -0.1f;
+    float cam_rx = 0.0f;
+    float cam_ry = 0.0f;
     float fov = PI * 0.25f; // 45 degree FOV
     int rad = 40;
 
@@ -228,7 +231,9 @@ int main()
 void update_camera(float* x, float* y, float* z, float* rx, float* ry)
 {
     static float prev_time = 0.0f;
+    static float f[3] = {0, 0, 1}; // points into screen
     const float mouse_speed = 0.1f; // how fast camera rotates
+    const float walk_speed = 1.0f; // how fast camera translates
     float current_time;
     float delta_x;
     float delta_y;
@@ -243,6 +248,25 @@ void update_camera(float* x, float* y, float* z, float* rx, float* ry)
     current_time = (float)glfwGetTime();
     delta_t = current_time - prev_time;
     prev_time = current_time;
+
+    // UPDATE FORWARD VEC //
+    //f[0] = cosf(*rx) * sinf(*ry);
+    //f[1] = sin(*ry);
+    //f[2] = cos(*ry) * sin(*rx);
+    f[0] = sinf(*rx);
+    f[1] = 0.0f;
+    f[2] = cosf(*rx);
+    normalize(&f[0], &f[1], &f[2]);
+
+    // UPDATE POSN //
+    // TODO extract vector operations
+    if (glfwGetKey(w, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        // posn += f * delta_t * walk_speed;
+        *x += f[0] * delta_t * walk_speed;
+        *y += f[1] * delta_t * walk_speed;
+        *z += f[2] * delta_t * walk_speed;
+    }
 
     *rx += mouse_speed * delta_t * delta_x;
     *ry += mouse_speed * delta_t * delta_y;
