@@ -49,6 +49,9 @@ int main()
         return -1;
     }
 
+    // place cursor at center
+    glfwSetCursorPos(w, WIDTH / 2, HEIGHT / 2);
+
     // === triangle stuff ===
     // create triangle VAO (vtx array obj)
     glGenVertexArrays(1, &VertexArrayID);
@@ -230,6 +233,7 @@ void update_camera(float* p, float* rx, float* ry)
 {
     static float prev_time = 0.0f;
     static float f[3] = {0, 0, -1}; // points into screen
+    static float r[3] = {1, 0, 0}; // points to the right of the screen
     float tmp[3];
     const float mouse_speed = 0.1f; // how fast camera rotates
     const float walk_speed = 1.0f; // how fast camera translates
@@ -255,11 +259,23 @@ void update_camera(float* p, float* rx, float* ry)
         vec_multiply(tmp, delta_t * walk_speed, f);
         vec_add(p, p, tmp);
     }
+    if (glfwGetKey(w, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        // p = p - (r * delta_t * speed)
+        vec_multiply(tmp, delta_t * walk_speed, r);
+        vec_sub(p, p, tmp);
+    }
     if (glfwGetKey(w, GLFW_KEY_S) == GLFW_PRESS)
     {
         // p = p - (d * delta_t * speed)
         vec_multiply(tmp, delta_t * walk_speed, f);
         vec_sub(p, p, tmp);
+    }
+    if (glfwGetKey(w, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        // p = p + (r * delta_t * speed)
+        vec_multiply(tmp, delta_t * walk_speed, r);
+        vec_add(p, p, tmp);
     }
 
     // UPDATE LOOK DIRECTION //
@@ -271,6 +287,12 @@ void update_camera(float* p, float* rx, float* ry)
     f[1] = sinf(*ry); // to make movement horizontal, set to 0
     f[2] = -1.0f * cosf(*rx);
     normalize(&f[0], &f[1], &f[2]);
+
+    // UPDATE RIGHT VEC //
+    r[0] = sinf(*rx + (PI  * 0.5));
+    r[1] = 0.0f;
+    r[2] = -1.0f * cosf(*rx + (PI * 0.5));
+    normalize(&r[0], &r[1], &r[2]);
 }
 
 
