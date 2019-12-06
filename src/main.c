@@ -163,9 +163,7 @@ int main()
 
     // MAKE MVP MATRIX //
     float mvp_matrix[16];
-    float cam_x = 0.0f;
-    float cam_y = 0.0f;
-    float cam_z = 5.0f;
+    float cam_p[3] = {0.0f, 0.0f, 5.0f};
     //float cam_rx = PI * -0.3f;
     //float cam_ry = PI * -0.1f;
     float cam_rx = 0.0f;
@@ -189,8 +187,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // UPDATE THE CAMERA //
-        update_camera(&cam_x, &cam_y, &cam_z, &cam_rx, &cam_ry);
-        set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_x, cam_y, cam_z,
+        update_camera(&cam_p[0], &cam_p[1], &cam_p[2], &cam_rx, &cam_ry);
+        set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_p[0], cam_p[1], cam_p[2],
                       cam_rx, cam_ry, fov, 0, rad);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, mvp_matrix);
 
@@ -233,6 +231,7 @@ void update_camera(float* x, float* y, float* z, float* rx, float* ry)
     static float prev_time = 0.0f;
     static float f[3] = {0, 0, -1}; // points into screen
     static float p[3] = {0, 0, 0};
+    float tmp[3];
     const float mouse_speed = 0.1f; // how fast camera rotates
     const float walk_speed = 1.0f; // how fast camera translates
     float current_time;
@@ -262,37 +261,18 @@ void update_camera(float* x, float* y, float* z, float* rx, float* ry)
     */
 
     // UPDATE POSN //
-    // TODO extract vector operations
-    /*
-    if (glfwGetKey(w, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        // posn += f * delta_t * walk_speed;
-        *x += f[0] * delta_t * walk_speed;
-        *y += f[1] * delta_t * walk_speed;
-        *z += f[2] * delta_t * walk_speed;
-    }
-    */
-    /*
     p[0] = *x;
     p[1] = *y;
     p[2] = *z;
-    */
     if (glfwGetKey(w, GLFW_KEY_W) == GLFW_PRESS)
     {
-        /*
-        printf("pressing w!\n");
-        f[2] = f[2] * delta_t * walk_speed;
-        p[2] = p[2] + f[2];
-        *z = *z + (delta_t * walk_speed);
-        */
-
-        *z = *z - 0.01f;
+        // p = p + (d * delta_t * speed)
+        vec_multiply(tmp, delta_t * walk_speed, f);
+        vec_add(p, p, tmp);
     }
-    /*
     *x = p[0];
     *y = p[1];
     *z = p[2];
-    */
 
     *rx += mouse_speed * delta_t * delta_x;
     *ry += mouse_speed * delta_t * delta_y;

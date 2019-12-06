@@ -16,15 +16,19 @@ void normalize(float *x, float *y, float *z);
 
 /*
  * Multiply a vector of 3 floats by a constant.
+ * dst = c * v
+ *
+ * @dst: vector of 3 floats to store result of multiplying @v by @c.
  */
-void vec_multiply(const float c, float* v);
+void vec_multiply(float* dst, const float c, const float* v);
 
 /*
  * Add two vectors of 3 floats.
+ * dst = u * v
  *
- * @u = @u + @v.
+ * @dst: vector of 3 floats to store result of multiplying @v by @u.
  */
-void vec_add(float* u, const float* v);
+void vec_add(float* dst, const float* u, const float* v);
 
 /*
  * Create a 4x4 identity matrix.
