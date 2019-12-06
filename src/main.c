@@ -231,7 +231,8 @@ int main()
 void update_camera(float* x, float* y, float* z, float* rx, float* ry)
 {
     static float prev_time = 0.0f;
-    static float f[3] = {0, 0, 1}; // points into screen
+    static float f[3] = {0, 0, -1}; // points into screen
+    static float p[3] = {0, 0, 0};
     const float mouse_speed = 0.1f; // how fast camera rotates
     const float walk_speed = 1.0f; // how fast camera translates
     float current_time;
@@ -250,6 +251,7 @@ void update_camera(float* x, float* y, float* z, float* rx, float* ry)
     prev_time = current_time;
 
     // UPDATE FORWARD VEC //
+    /*
     //f[0] = cosf(*rx) * sinf(*ry);
     //f[1] = sin(*ry);
     //f[2] = cos(*ry) * sin(*rx);
@@ -257,9 +259,11 @@ void update_camera(float* x, float* y, float* z, float* rx, float* ry)
     f[1] = 0.0f;
     f[2] = cosf(*rx);
     normalize(&f[0], &f[1], &f[2]);
+    */
 
     // UPDATE POSN //
     // TODO extract vector operations
+    /*
     if (glfwGetKey(w, GLFW_KEY_W) == GLFW_PRESS)
     {
         // posn += f * delta_t * walk_speed;
@@ -267,6 +271,28 @@ void update_camera(float* x, float* y, float* z, float* rx, float* ry)
         *y += f[1] * delta_t * walk_speed;
         *z += f[2] * delta_t * walk_speed;
     }
+    */
+    /*
+    p[0] = *x;
+    p[1] = *y;
+    p[2] = *z;
+    */
+    if (glfwGetKey(w, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        /*
+        printf("pressing w!\n");
+        f[2] = f[2] * delta_t * walk_speed;
+        p[2] = p[2] + f[2];
+        *z = *z + (delta_t * walk_speed);
+        */
+
+        *z = *z - 0.01f;
+    }
+    /*
+    *x = p[0];
+    *y = p[1];
+    *z = p[2];
+    */
 
     *rx += mouse_speed * delta_t * delta_x;
     *ry += mouse_speed * delta_t * delta_y;
