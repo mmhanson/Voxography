@@ -11,6 +11,11 @@
 #define MIN_MAJOR_VERSION 3
 #define MIN_MINOR_VERSION 3
 
+#define FOV ((PI) * 0.25f)
+#define BLOCK_VERTEX_SHADER_PATH "shaders/vertex_shader.glsl"
+#define BLOCK_FRAGMENT_SHADER_PATH "shaders/fragment_shader.glsl"
+#define MATRIX_SHADER_NAME "MVP"
+
 /*
  * Update the camera's position based on by current input.
  *
@@ -27,18 +32,26 @@ GLFWwindow* w;
 
 int main()
 {
-    GLuint VertexArrayID;
+    GLuint vertex_array;
+    GLuint block_shaders_id;
+    GLuint vertex_buffer_id;
+    GLuint color_buffer_id;
+    GLuint matrix_id;
+
+    // camera information
+    float matrix[16];
+    float cam_p[3] = {0.0f, 0.0f, 5.0f};
+    float cam_rx = 0.0f;
+    float cam_ry = 0.0f;
+    int rad = 40;
 
     init_opengl();
 
     // === cube stuff ===
-    // create triangle VAO (vtx array obj)
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);
     // cube
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-    static const GLfloat g_vertex_buffer_data[] = {
+    static const GLfloat vertex_data[] = {
         -1.0f,-1.0f,-1.0f, // triangle 1 : begin
         -1.0f,-1.0f, 1.0f,
         -1.0f, 1.0f, 1.0f, // triangle 1 : end
@@ -77,7 +90,7 @@ int main()
         1.0f,-1.0f, 1.0f
     };
     // One color for each vertex. They were generated randomly.
-    static const GLfloat g_color_buffer_data[] = {
+    static const GLfloat color_data[] = {
         0.583f,  0.771f,  0.014f,
         0.609f,  0.115f,  0.436f,
         0.327f,  0.483f,  0.844f,
@@ -116,60 +129,43 @@ int main()
         0.982f,  0.099f,  0.879f
     };
 
-    // load the vertex data
-    // This will identify our vertex buffer
-    GLuint vertexbuffer;
-    // Generate 1 buffer, put the resulting identifier in vertexbuffer
-    glGenBuffers(1, &vertexbuffer);
-    // The following commands will talk about our 'vertexbuffer' buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    // Give our vertices to OpenGL.
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    // create VAO
+    glGenVertexArrays(1, &vertex_array);
+    glBindVertexArray(vertex_array);
 
-    // load the color data
-    GLuint colorbuffer;
-    glGenBuffers(1, &colorbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+    // give vertex data to opengl
+    glGenBuffers(1, &vertex_buffer_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data),
+                 vertex_data, GL_STATIC_DRAW);
 
-    // LOAD SHADERS //
-    GLuint programID = load_program("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+    // give color data to opengl
+    glGenBuffers(1, &color_buffer_id);
+    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color_data),
+                 color_data, GL_STATIC_DRAW);
 
-    // MAKE MVP MATRIX //
-    float mvp_matrix[16];
-    float cam_p[3] = {0.0f, 0.0f, 5.0f};
-    //float cam_rx = PI * -0.3f;
-    //float cam_ry = PI * -0.1f;
-    float cam_rx = 0.0f;
-    float cam_ry = 0.0f;
-    float fov = PI * 0.25f; // 45 degree FOV
-    int rad = 40;
-
-    // use shaders
-    glUseProgram(programID);
-    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-
-    // Enable depth test
-    glEnable(GL_DEPTH_TEST);
-    // Accept fragment if it closer to the camera than the former one
-    glDepthFunc(GL_LESS);
+    // load/ues shaders
+    block_shaders_id = load_program(BLOCK_VERTEX_SHADER_PATH,
+                                    BLOCK_FRAGMENT_SHADER_PATH);
+    glUseProgram(block_shaders_id);
+    matrix_id = glGetUniformLocation(block_shaders_id, MATRIX_SHADER_NAME);
 
     // gameloop
-    glfwSetInputMode(w, GLFW_STICKY_KEYS, GL_TRUE);
     do
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // UPDATE THE CAMERA //
         update_camera(cam_p, &cam_rx, &cam_ry);
-        set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_p[0], cam_p[1], cam_p[2],
-                      cam_rx, cam_ry, fov, 0, rad);
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, mvp_matrix);
+        set_matrix_3d(matrix, WIDTH, HEIGHT, cam_p[0], cam_p[1], cam_p[2],
+                      cam_rx, cam_ry, FOV, 0, rad);
+        glUniformMatrix4fv(matrix_id, 1, GL_FALSE, matrix);
 
         // === draw triangle === 
         // 1st attribute buffer : vertices
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
         glVertexAttribPointer(
             0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
             3,                  // size
@@ -180,7 +176,7 @@ int main()
             );
         // 2nd attribute buffer : colors
         glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
         glVertexAttribPointer(
             1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
             3,                                // size
@@ -295,4 +291,10 @@ void init_opengl()
         fprintf(stderr, "Failed to initialize glew.\n");
         exit(-1);
     }
+
+    // enable occlusion
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    glfwSetInputMode(w, GLFW_STICKY_KEYS, GL_TRUE);
 }
