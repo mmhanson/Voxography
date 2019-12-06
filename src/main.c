@@ -11,10 +11,10 @@
 /*
  * Update the camera's position based on by current input.
  *
- * @x @y @z: point to the current x, y, z of the camera. Will be updated.
+ * @p: point to array of the current x, y, z of the camera. Will be updated.
  * @rx @ry: point to the current rx, ry of camera. Will be updated.
  */
-void update_camera(float* x, float* y, float* z, float* rx, float* ry);
+void update_camera(float* p, float* rx, float* ry);
 
 GLFWwindow* w;
 
@@ -187,7 +187,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // UPDATE THE CAMERA //
-        update_camera(&cam_p[0], &cam_p[1], &cam_p[2], &cam_rx, &cam_ry);
+        update_camera(cam_p, &cam_rx, &cam_ry);
         set_matrix_3d(mvp_matrix, WIDTH, HEIGHT, cam_p[0], cam_p[1], cam_p[2],
                       cam_rx, cam_ry, fov, 0, rad);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, mvp_matrix);
@@ -226,11 +226,10 @@ int main()
            glfwWindowShouldClose(w) == 0);
 }
 
-void update_camera(float* x, float* y, float* z, float* rx, float* ry)
+void update_camera(float* p, float* rx, float* ry)
 {
     static float prev_time = 0.0f;
     static float f[3] = {0, 0, -1}; // points into screen
-    static float p[3] = {0, 0, 0};
     float tmp[3];
     const float mouse_speed = 0.1f; // how fast camera rotates
     const float walk_speed = 1.0f; // how fast camera translates
@@ -249,33 +248,24 @@ void update_camera(float* x, float* y, float* z, float* rx, float* ry)
     delta_t = current_time - prev_time;
     prev_time = current_time;
 
-    // UPDATE FORWARD VEC //
-    /*
-    //f[0] = cosf(*rx) * sinf(*ry);
-    //f[1] = sin(*ry);
-    //f[2] = cos(*ry) * sin(*rx);
-    f[0] = sinf(*rx);
-    f[1] = 0.0f;
-    f[2] = cosf(*rx);
-    normalize(&f[0], &f[1], &f[2]);
-    */
-
     // UPDATE POSN //
-    p[0] = *x;
-    p[1] = *y;
-    p[2] = *z;
     if (glfwGetKey(w, GLFW_KEY_W) == GLFW_PRESS)
     {
         // p = p + (d * delta_t * speed)
         vec_multiply(tmp, delta_t * walk_speed, f);
         vec_add(p, p, tmp);
     }
-    *x = p[0];
-    *y = p[1];
-    *z = p[2];
 
+    // UPDATE LOOK DIRECTION //
     *rx += mouse_speed * delta_t * delta_x;
     *ry += mouse_speed * delta_t * delta_y;
+
+    // UPDATE FORWARD VEC //
+    f[0] = sinf(*rx);
+    //f[1] = 0.0f;
+    f[1] = sinf(*ry);
+    f[2] = -1.0f * cosf(*rx);
+    normalize(&f[0], &f[1], &f[2]);
 }
 
 
