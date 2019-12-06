@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "util.h"
@@ -7,6 +8,8 @@
 
 #define WIDTH 1024
 #define HEIGHT 768
+#define MIN_MAJOR_VERSION 3
+#define MIN_MINOR_VERSION 3
 
 /*
  * Update the camera's position based on by current input.
@@ -15,6 +18,10 @@
  * @rx @ry: point to the current rx, ry of camera. Will be updated.
  */
 void update_camera(float* p, float* rx, float* ry);
+/*
+ * Initialize GLFW, create the window (@w), and initialize GLEW.
+ */
+void init_opengl();
 
 GLFWwindow* w;
 
@@ -22,48 +29,12 @@ int main()
 {
     GLuint VertexArrayID;
 
-    // initialize glfw
-    if (!glfwInit())
-    {
-        fprintf(stderr, "Failed to initialize glfw.\n");
-        return -1;
-    }
+    init_opengl();
 
-    // minimum versions
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-
-    // create window
-    w = glfwCreateWindow(WIDTH, HEIGHT, "My Window", 0, 0);
-    if (!w)
-    {
-        fprintf(stderr, "Failed to create window.\n");
-        return -1;
-    }
-    glfwMakeContextCurrent(w);
-
-    // initialize glew
-    if (glewInit() != GLEW_OK)
-    {
-        fprintf(stderr, "Failed to initialize glew.\n");
-        return -1;
-    }
-
-    // place cursor at center
-    glfwSetCursorPos(w, WIDTH / 2, HEIGHT / 2);
-
-    // === triangle stuff ===
+    // === cube stuff ===
     // create triangle VAO (vtx array obj)
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
-    /*
-    // triangle
-    static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f, -1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f,  1.0f, 0.0f,
-    };
-    */
     // cube
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -295,16 +266,33 @@ void update_camera(float* p, float* rx, float* ry)
     normalize(&r[0], &r[1], &r[2]);
 }
 
+void init_opengl()
+{
+    // initialize glfw
+    if (!glfwInit())
+    {
+        fprintf(stderr, "Failed to initialize glfw.\n");
+        exit(-1);
+    }
 
+    // minimum versions
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MIN_MAJOR_VERSION);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MIN_MINOR_VERSION);
 
+    // create window
+    w = glfwCreateWindow(WIDTH, HEIGHT, "My Window", 0, 0);
+    if (!w)
+    {
+        fprintf(stderr, "Failed to create window.\n");
+        exit(-1);
+    }
+    glfwMakeContextCurrent(w);
+    glfwSetCursorPos(w, WIDTH / 2, HEIGHT / 2); // place cursor at center
 
-
-
-
-
-
-
-
-
-
-
+    // initialize glew
+    if (glewInit() != GLEW_OK)
+    {
+        fprintf(stderr, "Failed to initialize glew.\n");
+        exit(-1);
+    }
+}
