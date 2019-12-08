@@ -111,19 +111,11 @@ int main()
     glGenVertexArrays(1, &vertex_array);
     glBindVertexArray(vertex_array);
 
-    // give vertex data to opengl
+    // create the vertex and color buffers for the blocks
     glGenBuffers(1, &vertex_buffer_id);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data),
-                 vertex_data, GL_STATIC_DRAW);
-
-    // give color data to opengl
     glGenBuffers(1, &color_buffer_id);
-    glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(color_data),
-                 color_data, GL_STATIC_DRAW);
 
-    // load/ues shaders
+    // load/use shaders
     block_shaders_id = load_program(BLOCK_VERTEX_SHADER_PATH,
                                     BLOCK_FRAGMENT_SHADER_PATH);
     glUseProgram(block_shaders_id);
@@ -141,15 +133,23 @@ int main()
         glUniformMatrix4fv(matrix_id, 1, GL_FALSE, matrix);
 
         // DRAW FIRST BLOCK //
+        // buffer the vertices
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data),
+                     vertex_data, GL_STATIC_DRAW);
         // describe the layout of the vertex buffer
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        // buffer the colors
+        glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(color_data),
+                     color_data, GL_STATIC_DRAW);
         // describe the layout of the color buffer
         glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        // draw it
+        // draw the block
         glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
         glDisableVertexAttribArray(0);
 
