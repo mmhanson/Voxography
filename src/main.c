@@ -18,11 +18,11 @@
 // 12 triangles, 3 vtxs each -> 36 vtxs
 #define VTXS_PER_BLOCK 36
 
-#define COPY_VERTEX(p, vertex_data);             \
-    vertex_data[0] = p[0];                      \
-    vertex_data[1] = p[1];                      \
-    vertex_data[2] = p[2];                      \
-    vertex_data = vertex_data + 3;
+#define COPY_VERTEX(v, vertices);            \
+    vertices[0] = v[0];                      \
+    vertices[1] = v[1];                      \
+    vertices[2] = v[2];                      \
+    vertices = vertices + 3;
 
 /*
  * Update the camera's position based on by current input.
@@ -140,30 +140,16 @@ int main()
                       cam_rx, cam_ry, FOV, 0, rad);
         glUniformMatrix4fv(matrix_id, 1, GL_FALSE, matrix);
 
-        // === draw triangle === 
-        // 1st attribute buffer : vertices
-        glEnableVertexAttribArray(0);
+        // DRAW FIRST BLOCK //
+        // describe the layout of the vertex buffer
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
-        glVertexAttribPointer(
-            0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-            3,                  // size
-            GL_FLOAT,           // type
-            GL_FALSE,           // normalized?
-            0,                  // stride
-            (void*)0            // array buffer offset
-            );
-        // 2nd attribute buffer : colors
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        // describe the layout of the color buffer
         glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
-        glVertexAttribPointer(
-            1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-            3,                                // size
-            GL_FLOAT,                         // type
-            GL_FALSE,                         // normalized?
-            0,                                // stride
-            (void*)0                          // array buffer offset
-            );
-        // Draw the triangle !
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        // draw it
         glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
         glDisableVertexAttribArray(0);
 
