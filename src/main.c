@@ -47,28 +47,35 @@ void comp_block_vertex_data(const int* a, float* vertex_data);
 
 GLFWwindow* w;
 
+typedef struct BlockTag
+{
+    GLfloat* vertex_data; // array of 108 floats
+    GLfloat* color_data;
+    size_t vertex_data_size;
+    size_t color_data_size;
+} Block;
+
 int main()
 {
-    static GLfloat vertex_data[108]; // array of vtxs for one block
-    const int block_coord[3] = {0, 0, 0};
     GLuint vertex_array;
     GLuint block_shaders_id;
     GLuint vertex_buffer_id;
     GLuint color_buffer_id;
     GLuint matrix_id;
+    Block* blocks[7]; // NULL-term'd array of pointers to each block
+    Block* block_cursor;
+    int idx;
 
-    // camera information
-    float matrix[16];
-    float cam_p[3] = {0.0f, 0.0f, 2.0f};
-    float cam_rx = 0.0f;
-    float cam_ry = 0.0f;
-    int rad = 40;
-
-    init_opengl();
-
-    comp_block_vertex_data(block_coord, vertex_data);
+    static GLfloat block0_vertex_data[108]; // array of vtxs for one block
+    static GLfloat block1_vertex_data[108];
+    static GLfloat block2_vertex_data[108];
+    static GLfloat block3_vertex_data[108];
+    static GLfloat block4_vertex_data[108];
+    static GLfloat block5_vertex_data[108];
+    static GLfloat block6_vertex_data[108];
+    static GLfloat block7_vertex_data[108];
     // One color for each vertex. They were generated randomly.
-    static const GLfloat color_data[] = {
+    static GLfloat block0_color_data[] = {
         0.583f,  0.771f,  0.014f,
         0.609f,  0.115f,  0.436f,
         0.327f,  0.483f,  0.844f,
@@ -107,6 +114,49 @@ int main()
         0.982f,  0.099f,  0.879f
     };
 
+    // camera information
+    float matrix[16];
+    float cam_p[3] = {-1.0f, 1.5f, 2.0f};
+    float cam_rx = 0.5f;
+    float cam_ry = -0.8f;
+    int rad = 40;
+
+    init_opengl();
+
+    // MAKE THE BLOCKS (hardcoded) //
+    const int block0_coord[3] = {0, 0, 0};
+    Block block0 = {block0_vertex_data, block0_color_data,
+                    sizeof(block0_vertex_data), sizeof(block0_color_data)};
+    comp_block_vertex_data(block0_coord, block0_vertex_data);
+    const int block1_coord[3] = {1, 0, 0};
+    Block block1 = {block1_vertex_data, block0_color_data,
+                    sizeof(block1_vertex_data), sizeof(block0_color_data)};
+    comp_block_vertex_data(block1_coord, block1_vertex_data);
+    const int block2_coord[3] = {0, 0, -1};
+    Block block2 = {block2_vertex_data, block0_color_data,
+                    sizeof(block2_vertex_data), sizeof(block0_color_data)};
+    comp_block_vertex_data(block2_coord, block2_vertex_data);
+    const int block3_coord[3] = {0, 0, 1};
+    Block block3 = {block3_vertex_data, block0_color_data,
+                    sizeof(block3_vertex_data), sizeof(block0_color_data)};
+    comp_block_vertex_data(block3_coord, block3_vertex_data);
+    const int block4_coord[3] = {-1, 0, 0};
+    Block block4 = {block4_vertex_data, block0_color_data,
+                    sizeof(block4_vertex_data), sizeof(block0_color_data)};
+    comp_block_vertex_data(block4_coord, block4_vertex_data);
+    const int block5_coord[3] = {0, 1, 0};
+    Block block5 = {block5_vertex_data, block0_color_data,
+                    sizeof(block5_vertex_data), sizeof(block0_color_data)};
+    comp_block_vertex_data(block5_coord, block5_vertex_data);
+    // put in array
+    blocks[0] = &block0;
+    blocks[1] = &block1;
+    blocks[2] = &block2;
+    blocks[3] = &block3;
+    blocks[4] = &block4;
+    blocks[5] = &block5;
+    blocks[6] = NULL;
+
     // create VAO
     glGenVertexArrays(1, &vertex_array);
     glBindVertexArray(vertex_array);
@@ -132,26 +182,31 @@ int main()
                       cam_rx, cam_ry, FOV, 0, rad);
         glUniformMatrix4fv(matrix_id, 1, GL_FALSE, matrix);
 
-        // DRAW FIRST BLOCK //
-        // buffer the vertices
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data),
-                     vertex_data, GL_STATIC_DRAW);
-        // describe the layout of the vertex buffer
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        // buffer the colors
-        glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(color_data),
-                     color_data, GL_STATIC_DRAW);
-        // describe the layout of the color buffer
-        glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        // draw the block
-        glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
-        glDisableVertexAttribArray(0);
+        // DRAW EACH BLOCK //
+        for (idx = 0; blocks[idx] != NULL; idx++)
+        {
+            block_cursor = blocks[idx];
+
+            // buffer the block's vertices
+            glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
+            glBufferData(GL_ARRAY_BUFFER, block_cursor->vertex_data_size,
+                         block_cursor->vertex_data, GL_STATIC_DRAW);
+            // describe the layout of the vertex buffer
+            glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            // buffer the block's colors
+            glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
+            glBufferData(GL_ARRAY_BUFFER, block_cursor->color_data_size,
+                         block_cursor->color_data, GL_STATIC_DRAW);
+            // describe the layout of the color buffer
+            glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            // draw the block
+            glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
+            glDisableVertexAttribArray(0);
+        }
 
         glfwSwapBuffers(w);
         glfwPollEvents();
