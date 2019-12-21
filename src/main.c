@@ -311,7 +311,7 @@ void init_opengl()
         exit(-1);
     }
 
-    // enable occlusion
+    // enable z-buffering
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
