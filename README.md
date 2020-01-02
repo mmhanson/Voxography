@@ -1,4 +1,4 @@
-Dependencies: cmake libgl1-mesa-dev xorg-dev libglu1-mesa-dev
+Dependencies: cmake libgl1-mesa-dev xorg-dev libglu1-mesa-dev libglfw3-dev
 
 
 

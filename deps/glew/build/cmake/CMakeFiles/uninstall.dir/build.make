@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/max/code/repos/Cubes
+CMAKE_SOURCE_DIR = "/media/max/External Storage/Programming/Repositories/Cubes"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/max/code/repos/Cubes
+CMAKE_BINARY_DIR = "/media/max/External Storage/Programming/Repositories/Cubes"
 
 # Utility rule file for uninstall.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/max/code/repos/Cubes
 include deps/glew/build/cmake/CMakeFiles/uninstall.dir/progress.make
 
 deps/glew/build/cmake/CMakeFiles/uninstall:
-	cd /home/max/code/repos/Cubes/deps/glew/build/cmake && /usr/bin/cmake -P /home/max/code/repos/Cubes/deps/glew/build/cmake/cmake_uninstall.cmake
+	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && /usr/bin/cmake -P /media/max/External\ Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/cmake_uninstall.cmake
 
 uninstall: deps/glew/build/cmake/CMakeFiles/uninstall
 uninstall: deps/glew/build/cmake/CMakeFiles/uninstall.dir/build.make
@@ -67,10 +67,10 @@ deps/glew/build/cmake/CMakeFiles/uninstall.dir/build: uninstall
 .PHONY : deps/glew/build/cmake/CMakeFiles/uninstall.dir/build
 
 deps/glew/build/cmake/CMakeFiles/uninstall.dir/clean:
-	cd /home/max/code/repos/Cubes/deps/glew/build/cmake && $(CMAKE_COMMAND) -P CMakeFiles/uninstall.dir/cmake_clean.cmake
+	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && $(CMAKE_COMMAND) -P CMakeFiles/uninstall.dir/cmake_clean.cmake
 .PHONY : deps/glew/build/cmake/CMakeFiles/uninstall.dir/clean
 
 deps/glew/build/cmake/CMakeFiles/uninstall.dir/depend:
-	cd /home/max/code/repos/Cubes && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/max/code/repos/Cubes /home/max/code/repos/Cubes/deps/glew/build/cmake /home/max/code/repos/Cubes /home/max/code/repos/Cubes/deps/glew/build/cmake /home/max/code/repos/Cubes/deps/glew/build/cmake/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd "/media/max/External Storage/Programming/Repositories/Cubes" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/media/max/External Storage/Programming/Repositories/Cubes" "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" "/media/max/External Storage/Programming/Repositories/Cubes" "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/CMakeFiles/uninstall.dir/DependInfo.cmake" --color=$(COLOR)
 .PHONY : deps/glew/build/cmake/CMakeFiles/uninstall.dir/depend
 

@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/max/code/repos/Cubes/deps/glew/src/glewinfo.c
+/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/src/glewinfo.c
 stdio.h
 -
 stdlib.h

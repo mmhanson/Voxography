@@ -6,5 +6,5 @@ C_FLAGS = -fPIC   --std=c99 -g
 
 C_DEFINES = -DGLEW_BUILD -DGLEW_NO_GLU -Dglew_EXPORTS
 
-C_INCLUDES = -I/home/max/code/repos/Cubes/deps/glew/build/cmake/../../include 
+C_INCLUDES = -I"/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/../../include" 
 
