@@ -1,4 +1,4 @@
-Dependencies: libglfw3-dev libglew-dev cmake build-essentials
+Dependencies: cmake libgl1-mesa-dev xorg-dev libglu1-mesa-dev
 
 
 
