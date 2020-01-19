@@ -1,14 +1,18 @@
 #version 330 core
+
+// texture logic
+// varying vec2 f_texcoord;
+// uniform sampler2D mytexture;
+
+// color logic
 out vec3 color;
-// interpolated values from vertex shader
 in vec3 fragmentColor;
 
 void main()
 {
-    // red
-    //color = vec3(1,0,0);
-
-    // output color->color specified in vtx shader interpolated
-    // btwn 3 surrounding vtxs
+    // color logic
     color = fragmentColor;
+
+    // texture logic
+    // color = texture2D(mytexture, f_texcoord).rgb // TODO flip?
 }

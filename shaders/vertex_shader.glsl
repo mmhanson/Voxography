@@ -1,7 +1,13 @@
 #version 330 core
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec3 vertexColor;
 
+// texture logic
+// attribute vec4 position;
+// attribute vec2 texcoord;
+// varying vec2 f_texcoord;
+
+// color logic
+in vec4 position;
+in vec3 vertexColor;
 out vec3 fragmentColor;
 
 uniform mat4 MVP;
@@ -9,7 +15,10 @@ uniform mat4 MVP;
 void main()
 {
     gl_Position = MVP * position;
-    // color for ea vtx will be interpolated to prodcue the color
-    // for each fragment
+
+    // color logic
     fragmentColor = vertexColor ;
+
+    // texture logic
+    // f_texcoord = texcoord;
 }

@@ -177,7 +177,7 @@ int main()
     unsigned char* atlas_image;
     unsigned int width;
     unsigned int height;
-    #define TEXTURE_ATLAS_PATH "../assets/textures/texture_atlas.png"
+    #define TEXTURE_ATLAS_PATH "./assets/textures/texture_atlas.png"
     error = lodepng_decode32_file(&atlas_image, &width, &height, TEXTURE_ATLAS_PATH);
     if (error)
     {
