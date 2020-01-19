@@ -16,6 +16,7 @@
 #define BLOCK_VERTEX_SHADER_PATH "shaders/vertex_shader.glsl"
 #define BLOCK_FRAGMENT_SHADER_PATH "shaders/fragment_shader.glsl"
 #define MATRIX_SHADER_NAME "MVP"
+#define TEXTURE_ATLAS_PATH "./assets/textures/texture_atlas.png"
 // 12 triangles, 3 vtxs each -> 36 vtxs
 #define VTXS_PER_BLOCK 36
 
@@ -66,6 +67,17 @@ int main()
     Block* blocks[7]; // NULL-term'd array of pointers to each block
     Block* block_cursor;
     int idx;
+
+    // textures
+    int error;
+    unsigned char* atlas_image;
+    unsigned int width;
+    unsigned int height;
+    GLuint texture_id;
+    GLuint texture_atlas_id;
+    GLint uniform_mytexture;
+    GLint attrib_texcoord;
+    GLuint attrib_position;
 
     static GLfloat block0_vertex_data[108]; // array of vtxs for one block
     static GLfloat block1_vertex_data[108];
@@ -172,21 +184,41 @@ int main()
     glUseProgram(block_shaders_id);
     matrix_id = glGetUniformLocation(block_shaders_id, MATRIX_SHADER_NAME);
 
-    // load texture atlas
-    int error;
-    unsigned char* atlas_image;
-    unsigned int width;
-    unsigned int height;
-    #define TEXTURE_ATLAS_PATH "./assets/textures/texture_atlas.png"
+    // load texture atlas into memory
     error = lodepng_decode32_file(&atlas_image, &width, &height, TEXTURE_ATLAS_PATH);
     if (error)
     {
         fprintf(stderr, "Could not load texture at '%s', error %u: %s\n",
                 TEXTURE_ATLAS_PATH, error, lodepng_error_text(error));
+        return 1;
     }
-    // TODO vertically flip image
-    //glTexImage2D();
+
+    // load texture atlas into GPU buffer
+    glGenTextures(1, &texture_atlas_id);
+    glBindTexture(GL_TEXTURE_2D, texture_atlas_id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, // target
+		0, // level, 0 = base, no minimap,
+		GL_RGBA, // internalformat
+        width,
+        height,
+		0, // border, always 0 in OpenGL ES
+		GL_RGBA, // format
+		GL_UNSIGNED_BYTE, // type
+        atlas_image);
     free(atlas_image);
+
+    // bind shader inputsj
+    attrib_texcoord = glGetAttribLocation(block_shaders_id, "texcoord");
+    if (attrib_texcoord == -1)
+    {
+        fprintf(stderr, "Could not bind attribute 'texcoord'.\n");
+    }
+    attrib_position = glGetAttribLocation(block_shaders_id, "position");
+    if (attrib_position == -1)
+    {
+        fprintf(stderr, "Couldn't bind attrib 'position' to shaders.\n");
+    }
 
     // gameloop
     do
