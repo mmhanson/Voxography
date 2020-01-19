@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/src/glewinfo.c" "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/CMakeFiles/glewinfo.dir/__/__/src/glewinfo.c.o"
+  "/home/max/Documents/Cubes/deps/glew/src/glewinfo.c" "/home/max/Documents/Cubes/deps/glew/build/cmake/CMakeFiles/glewinfo.dir/__/__/src/glewinfo.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
@@ -20,7 +20,7 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/CMakeFiles/glew.dir/DependInfo.cmake"
+  "/home/max/Documents/Cubes/deps/glew/build/cmake/CMakeFiles/glew.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

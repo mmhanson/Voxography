@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/media/max/External Storage/Programming/Repositories/Cubes"
+CMAKE_SOURCE_DIR = /home/max/Documents/Cubes
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/media/max/External Storage/Programming/Repositories/Cubes"
+CMAKE_BINARY_DIR = /home/max/Documents/Cubes
 
 # Include any dependencies generated for this target.
 include deps/glew/build/cmake/CMakeFiles/glew.dir/depend.make
@@ -59,16 +59,16 @@ include deps/glew/build/cmake/CMakeFiles/glew.dir/flags.make
 
 deps/glew/build/cmake/CMakeFiles/glew.dir/__/__/src/glew.c.o: deps/glew/build/cmake/CMakeFiles/glew.dir/flags.make
 deps/glew/build/cmake/CMakeFiles/glew.dir/__/__/src/glew.c.o: deps/glew/src/glew.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/media/max/External Storage/Programming/Repositories/Cubes/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building C object deps/glew/build/cmake/CMakeFiles/glew.dir/__/__/src/glew.c.o"
-	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/glew.dir/__/__/src/glew.c.o   -c "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/src/glew.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/max/Documents/Cubes/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object deps/glew/build/cmake/CMakeFiles/glew.dir/__/__/src/glew.c.o"
+	cd /home/max/Documents/Cubes/deps/glew/build/cmake && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/glew.dir/__/__/src/glew.c.o   -c /home/max/Documents/Cubes/deps/glew/src/glew.c
 
 deps/glew/build/cmake/CMakeFiles/glew.dir/__/__/src/glew.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/glew.dir/__/__/src/glew.c.i"
-	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/src/glew.c" > CMakeFiles/glew.dir/__/__/src/glew.c.i
+	cd /home/max/Documents/Cubes/deps/glew/build/cmake && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/max/Documents/Cubes/deps/glew/src/glew.c > CMakeFiles/glew.dir/__/__/src/glew.c.i
 
 deps/glew/build/cmake/CMakeFiles/glew.dir/__/__/src/glew.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/glew.dir/__/__/src/glew.c.s"
-	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/src/glew.c" -o CMakeFiles/glew.dir/__/__/src/glew.c.s
+	cd /home/max/Documents/Cubes/deps/glew/build/cmake && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/max/Documents/Cubes/deps/glew/src/glew.c -o CMakeFiles/glew.dir/__/__/src/glew.c.s
 
 deps/glew/build/cmake/CMakeFiles/glew.dir/__/__/src/glew.c.o.requires:
 
@@ -93,9 +93,9 @@ lib/libGLEW.so.2.1.0: deps/glew/build/cmake/CMakeFiles/glew.dir/build.make
 lib/libGLEW.so.2.1.0: /usr/lib/x86_64-linux-gnu/libGL.so
 lib/libGLEW.so.2.1.0: /usr/lib/x86_64-linux-gnu/libGLU.so
 lib/libGLEW.so.2.1.0: deps/glew/build/cmake/CMakeFiles/glew.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/media/max/External Storage/Programming/Repositories/Cubes/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Linking C shared library ../../../../lib/libGLEW.so"
-	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/glew.dir/link.txt --verbose=$(VERBOSE)
-	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && $(CMAKE_COMMAND) -E cmake_symlink_library ../../../../lib/libGLEW.so.2.1.0 ../../../../lib/libGLEW.so.2.1 ../../../../lib/libGLEW.so
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/max/Documents/Cubes/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C shared library ../../../../lib/libGLEW.so"
+	cd /home/max/Documents/Cubes/deps/glew/build/cmake && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/glew.dir/link.txt --verbose=$(VERBOSE)
+	cd /home/max/Documents/Cubes/deps/glew/build/cmake && $(CMAKE_COMMAND) -E cmake_symlink_library ../../../../lib/libGLEW.so.2.1.0 ../../../../lib/libGLEW.so.2.1 ../../../../lib/libGLEW.so
 
 lib/libGLEW.so.2.1: lib/libGLEW.so.2.1.0
 	@$(CMAKE_COMMAND) -E touch_nocreate lib/libGLEW.so.2.1
@@ -113,10 +113,10 @@ deps/glew/build/cmake/CMakeFiles/glew.dir/requires: deps/glew/build/cmake/CMakeF
 .PHONY : deps/glew/build/cmake/CMakeFiles/glew.dir/requires
 
 deps/glew/build/cmake/CMakeFiles/glew.dir/clean:
-	cd "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" && $(CMAKE_COMMAND) -P CMakeFiles/glew.dir/cmake_clean.cmake
+	cd /home/max/Documents/Cubes/deps/glew/build/cmake && $(CMAKE_COMMAND) -P CMakeFiles/glew.dir/cmake_clean.cmake
 .PHONY : deps/glew/build/cmake/CMakeFiles/glew.dir/clean
 
 deps/glew/build/cmake/CMakeFiles/glew.dir/depend:
-	cd "/media/max/External Storage/Programming/Repositories/Cubes" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/media/max/External Storage/Programming/Repositories/Cubes" "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" "/media/max/External Storage/Programming/Repositories/Cubes" "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake" "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/CMakeFiles/glew.dir/DependInfo.cmake" --color=$(COLOR)
+	cd /home/max/Documents/Cubes && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/max/Documents/Cubes /home/max/Documents/Cubes/deps/glew/build/cmake /home/max/Documents/Cubes /home/max/Documents/Cubes/deps/glew/build/cmake /home/max/Documents/Cubes/deps/glew/build/cmake/CMakeFiles/glew.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : deps/glew/build/cmake/CMakeFiles/glew.dir/depend
 

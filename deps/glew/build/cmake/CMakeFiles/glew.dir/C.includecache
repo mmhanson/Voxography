@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/src/glew.c
+/home/max/Documents/Cubes/deps/glew/src/glew.c
 GL/glew.h
 -
 GL/osmesa.h

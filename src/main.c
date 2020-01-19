@@ -5,7 +5,6 @@
 #include <GLFW/glfw3.h>
 #include "util.h"
 #include "matrix.h"
-#include "lodepng.h"
 
 #define WIDTH 1024
 #define HEIGHT 768
@@ -171,22 +170,6 @@ int main()
                                     BLOCK_FRAGMENT_SHADER_PATH);
     glUseProgram(block_shaders_id);
     matrix_id = glGetUniformLocation(block_shaders_id, MATRIX_SHADER_NAME);
-
-    // load texture atlas
-    int error;
-    unsigned char* atlas_image;
-    unsigned int width;
-    unsigned int height;
-    #define TEXTURE_ATLAS_PATH "../assets/textures/texture_atlas.png"
-    error = lodepng_decode32_file(&atlas_image, &width, &height, TEXTURE_ATLAS_PATH);
-    if (error)
-    {
-        fprintf(stderr, "Could not load texture at '%s', error %u: %s\n",
-                TEXTURE_ATLAS_PATH, error, lodepng_error_text(error));
-    }
-    // TODO vertically flip image
-    //glTexImage2D();
-    free(atlas_image);
 
     // gameloop
     do

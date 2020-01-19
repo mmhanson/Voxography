@@ -1,13 +1,13 @@
-if(NOT EXISTS "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/install_manifest.txt")
-  message(FATAL_ERROR "Cannot find install manifest: /media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/install_manifest.txt")
-endif(NOT EXISTS "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/install_manifest.txt")
+if(NOT EXISTS "/home/max/Documents/Cubes/deps/glew/build/cmake/install_manifest.txt")
+  message(FATAL_ERROR "Cannot find install manifest: /home/max/Documents/Cubes/deps/glew/build/cmake/install_manifest.txt")
+endif(NOT EXISTS "/home/max/Documents/Cubes/deps/glew/build/cmake/install_manifest.txt")
 
 if (NOT DEFINED CMAKE_INSTALL_PREFIX)
   set (CMAKE_INSTALL_PREFIX "/usr/local")
 endif ()
  message(${CMAKE_INSTALL_PREFIX})
 
-file(READ "/media/max/External Storage/Programming/Repositories/Cubes/deps/glew/build/cmake/install_manifest.txt" files)
+file(READ "/home/max/Documents/Cubes/deps/glew/build/cmake/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 foreach(file ${files})
   message(STATUS "Uninstalling $ENV{DESTDIR}${file}")
