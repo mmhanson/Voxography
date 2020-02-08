@@ -3,6 +3,7 @@
 // texture logic
 varying vec2 fragment_texcoord;
 uniform sampler2D mytexture;
+out vec3 color;
 
 // color logic
 // out vec3 color;
@@ -14,5 +15,5 @@ void main()
     // color = fragmentColor;
 
     // texture logic
-    color = texture2D(mytexture, fragment_texcoord).rgb // TODO flip?
+    color = texture2D(mytexture, fragment_texcoord).rgb; // TODO flip?
 }

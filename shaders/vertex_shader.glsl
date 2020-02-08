@@ -1,8 +1,8 @@
 #version 330 core
 
 // texture logic
-attribute vec4 position;
-attribute vec2 texcoord;
+layout (location = 0) in vec4 position;
+layout (location = 1) in vec2 texcoord;
 varying vec2 fragment_texcoord;
 
 // color logic
