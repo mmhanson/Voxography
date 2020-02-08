@@ -47,14 +47,21 @@ void init_opengl();
  */
 void comp_block_vertex_data(const int* a, float* vertex_data);
 
+/*
+ * Compute the texcoords for a voxel.
+ *
+ * @texture_data: array of 72 floats (36 texcoords). Will contain texcoords.
+ */
+void comp_block_texture_data(float* texture_data);
+
 GLFWwindow* w;
 
 typedef struct BlockTag
 {
-    GLfloat* vertex_data; // array of 108 floats
-    GLfloat* color_data;
-    size_t vertex_data_size;
-    size_t color_data_size;
+    GLfloat* vertices; // array of 108 floats (36 points)
+    GLfloat* texcoords; // texture (u,v) coordinates
+    size_t vertices_size;
+    size_t texcoords_size;
 } Block;
 
 int main()
@@ -87,45 +94,8 @@ int main()
     static GLfloat block5_vertex_data[108];
     static GLfloat block6_vertex_data[108];
     static GLfloat block7_vertex_data[108];
-    // One color for each vertex. They were generated randomly.
-    static GLfloat block0_color_data[] = {
-        0.583f,  0.771f,  0.014f,
-        0.609f,  0.115f,  0.436f,
-        0.327f,  0.483f,  0.844f,
-        0.822f,  0.569f,  0.201f,
-        0.435f,  0.602f,  0.223f,
-        0.310f,  0.747f,  0.185f,
-        0.597f,  0.770f,  0.761f,
-        0.559f,  0.436f,  0.730f,
-        0.359f,  0.583f,  0.152f,
-        0.483f,  0.596f,  0.789f,
-        0.559f,  0.861f,  0.639f,
-        0.195f,  0.548f,  0.859f,
-        0.014f,  0.184f,  0.576f,
-        0.771f,  0.328f,  0.970f,
-        0.406f,  0.615f,  0.116f,
-        0.676f,  0.977f,  0.133f,
-        0.971f,  0.572f,  0.833f,
-        0.140f,  0.616f,  0.489f,
-        0.997f,  0.513f,  0.064f,
-        0.945f,  0.719f,  0.592f,
-        0.543f,  0.021f,  0.978f,
-        0.279f,  0.317f,  0.505f,
-        0.167f,  0.620f,  0.077f,
-        0.347f,  0.857f,  0.137f,
-        0.055f,  0.953f,  0.042f,
-        0.714f,  0.505f,  0.345f,
-        0.783f,  0.290f,  0.734f,
-        0.722f,  0.645f,  0.174f,
-        0.302f,  0.455f,  0.848f,
-        0.225f,  0.587f,  0.040f,
-        0.517f,  0.713f,  0.338f,
-        0.053f,  0.959f,  0.120f,
-        0.393f,  0.621f,  0.362f,
-        0.673f,  0.211f,  0.457f,
-        0.820f,  0.883f,  0.371f,
-        0.982f,  0.099f,  0.879f
-    };
+
+    static GLfloat block_texture_data[72]; // array of texcoords for each block
 
     // camera information
     float matrix[16];
@@ -136,30 +106,31 @@ int main()
 
     init_opengl();
 
+    comp_block_texture_data(block_texture_data);
     // MAKE THE BLOCKS (hardcoded) //
     const int block0_coord[3] = {0, 0, 0};
-    Block block0 = {block0_vertex_data, block0_color_data,
-                    sizeof(block0_vertex_data), sizeof(block0_color_data)};
+    Block block0 = {block0_vertex_data, block_texture_data,
+                    sizeof(block0_vertex_data), sizeof(block_texture_data)};
     comp_block_vertex_data(block0_coord, block0_vertex_data);
     const int block1_coord[3] = {1, 0, 0};
-    Block block1 = {block1_vertex_data, block0_color_data,
-                    sizeof(block1_vertex_data), sizeof(block0_color_data)};
+    Block block1 = {block1_vertex_data, block_texture_data,
+                    sizeof(block1_vertex_data), sizeof(block_texture_data)};
     comp_block_vertex_data(block1_coord, block1_vertex_data);
     const int block2_coord[3] = {0, 0, -1};
-    Block block2 = {block2_vertex_data, block0_color_data,
-                    sizeof(block2_vertex_data), sizeof(block0_color_data)};
+    Block block2 = {block2_vertex_data, block_texture_data,
+                    sizeof(block2_vertex_data), sizeof(block_texture_data)};
     comp_block_vertex_data(block2_coord, block2_vertex_data);
     const int block3_coord[3] = {0, 0, 1};
-    Block block3 = {block3_vertex_data, block0_color_data,
-                    sizeof(block3_vertex_data), sizeof(block0_color_data)};
+    Block block3 = {block3_vertex_data, block_texture_data,
+                    sizeof(block3_vertex_data), sizeof(block_texture_data)};
     comp_block_vertex_data(block3_coord, block3_vertex_data);
     const int block4_coord[3] = {-1, 0, 0};
-    Block block4 = {block4_vertex_data, block0_color_data,
-                    sizeof(block4_vertex_data), sizeof(block0_color_data)};
+    Block block4 = {block4_vertex_data, block_texture_data,
+                    sizeof(block4_vertex_data), sizeof(block_texture_data)};
     comp_block_vertex_data(block4_coord, block4_vertex_data);
     const int block5_coord[3] = {0, 1, 0};
-    Block block5 = {block5_vertex_data, block0_color_data,
-                    sizeof(block5_vertex_data), sizeof(block0_color_data)};
+    Block block5 = {block5_vertex_data, block_texture_data,
+                    sizeof(block5_vertex_data), sizeof(block_texture_data)};
     comp_block_vertex_data(block5_coord, block5_vertex_data);
     // put in array
     blocks[0] = &block0;
@@ -196,6 +167,7 @@ int main()
     // load texture atlas into GPU buffer
     glGenTextures(1, &texture_atlas_id);
     glBindTexture(GL_TEXTURE_2D, texture_atlas_id);
+    glActiveTexture(GL_TEXTURE_0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, // target
 		0, // level, 0 = base, no minimap,
@@ -208,7 +180,7 @@ int main()
         atlas_image);
     free(atlas_image);
 
-    // bind shader inputsj
+    // bind shader inputs
     attrib_texcoord = glGetAttribLocation(block_shaders_id, "texcoord");
     if (attrib_texcoord == -1)
     {
@@ -370,7 +342,7 @@ void init_opengl()
 void comp_block_vertex_data(const int* a, float* vertex_data)
 {
     // TODO use VBO indexing
-    // see notebook p.79 for drawings. Transfer in when finalized.
+    // see project notebook p.9 for drawings. Transfer in when finalized.
     const int vertex_data_size = 108;
     const int b[3] = {a[0]+1, a[1]  , a[2]  };
     const int c[3] = {a[0]  , a[1]  , a[2]+1};
@@ -422,4 +394,9 @@ void comp_block_vertex_data(const int* a, float* vertex_data)
     COPY_VERTEX(g, vertex_data); // g-h-f
     COPY_VERTEX(h, vertex_data);
     COPY_VERTEX(f, vertex_data);
+}
+
+void comp_block_texture_data(float* texture_data)
+{
+    texcoords[0]
 }
