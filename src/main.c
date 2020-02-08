@@ -349,45 +349,45 @@ void comp_block_vertex_data(const int* a, float* vertex_data)
     const int h[3] = {a[0]+1, a[1]-1, a[2]+1};
 
     // face 1
-    COPY_VERTEX(a, vertex_data); // a-b-e
-    COPY_VERTEX(b, vertex_data);
-    COPY_VERTEX(e, vertex_data);
-    COPY_VERTEX(e, vertex_data); // e-f-b
+    COPY_VERTEX(b, vertex_data); // b-a-f
+    COPY_VERTEX(a, vertex_data);
     COPY_VERTEX(f, vertex_data);
-    COPY_VERTEX(b, vertex_data);
+    COPY_VERTEX(e, vertex_data); // e-f-a
+    COPY_VERTEX(f, vertex_data);
+    COPY_VERTEX(a, vertex_data);
     // face 2
     COPY_VERTEX(a, vertex_data); // a-c-e
     COPY_VERTEX(c, vertex_data);
     COPY_VERTEX(e, vertex_data);
-    COPY_VERTEX(e, vertex_data); // e-g-c
-    COPY_VERTEX(g, vertex_data);
+    COPY_VERTEX(g, vertex_data); // g-e-c
+    COPY_VERTEX(e, vertex_data);
     COPY_VERTEX(c, vertex_data);
     // face 3
     COPY_VERTEX(c, vertex_data); // c-d-g
     COPY_VERTEX(d, vertex_data);
     COPY_VERTEX(g, vertex_data);
-    COPY_VERTEX(g, vertex_data); // g-h-d
-    COPY_VERTEX(h, vertex_data);
+    COPY_VERTEX(h, vertex_data); // h-g-d
+    COPY_VERTEX(g, vertex_data);
     COPY_VERTEX(d, vertex_data);
     // face 4
-    COPY_VERTEX(b, vertex_data); // b-d-h
-    COPY_VERTEX(d, vertex_data);
+    COPY_VERTEX(d, vertex_data); // d-b-h
+    COPY_VERTEX(b, vertex_data);
     COPY_VERTEX(h, vertex_data);
     COPY_VERTEX(f, vertex_data); // f-h-b
     COPY_VERTEX(h, vertex_data);
     COPY_VERTEX(b, vertex_data);
     // face 5
-    COPY_VERTEX(a, vertex_data); // a-c-b
+    COPY_VERTEX(a, vertex_data); // a-b-c
+    COPY_VERTEX(b, vertex_data);
+    COPY_VERTEX(c, vertex_data);
+    COPY_VERTEX(d, vertex_data); // d-c-b
     COPY_VERTEX(c, vertex_data);
     COPY_VERTEX(b, vertex_data);
-    COPY_VERTEX(b, vertex_data); // b-d-c
-    COPY_VERTEX(d, vertex_data);
-    COPY_VERTEX(c, vertex_data);
     // face 6
     COPY_VERTEX(e, vertex_data); // e-f-g
     COPY_VERTEX(f, vertex_data);
     COPY_VERTEX(g, vertex_data);
-    COPY_VERTEX(g, vertex_data); // g-f-h
-    COPY_VERTEX(f, vertex_data);
+    COPY_VERTEX(g, vertex_data); // g-h-f
     COPY_VERTEX(h, vertex_data);
+    COPY_VERTEX(f, vertex_data);
 }
