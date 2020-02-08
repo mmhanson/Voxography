@@ -213,24 +213,20 @@ int main()
         {
             block_cursor = blocks[idx];
 
-            // buffer the block's vertices
+            // buffer block vertices into VAO
             glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
             glBufferData(GL_ARRAY_BUFFER, block_cursor->vertices_size,
-                         block_cursor->vertices, GL_STATIC_DRAW);
-            // describe the layout of the vertex buffer
-            glEnableVertexAttribArray(0);
-            // vertices are in attrib list 0
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
+                         block_cursor->vertices, GL_STATIC_DRAW); // load block_cursor->vertices into vertex_buffer_id's VBO
+            glVertexAttribPointer(attrib_position, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // make VAO's 'position' attribute point to VBO above
+            glEnableVertexAttribArray(attrib_position); // enable the new VAO attribute
+            glBindBuffer(GL_ARRAY_BUFFER, 0); // unbind VBO
 
-            // buffer the block's texcoords
+            // buffer block texcoords into VAO
             glBindBuffer(GL_ARRAY_BUFFER, texcoords_buffer_id);
             glBufferData(GL_ARRAY_BUFFER, block_cursor->texcoords_size,
                          block_cursor->texcoords, GL_STATIC_DRAW);
-            // describe the layout of the color buffer
-            glEnableVertexAttribArray(1);
-            // texcoords are in attrib list 1
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            glVertexAttribPointer(attrib_texcoord, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            glEnableVertexAttribArray(attrib_texcoord);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             // draw the block
