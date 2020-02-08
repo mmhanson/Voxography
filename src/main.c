@@ -26,6 +26,11 @@
     vertices[2] = v[2];                      \
     vertices = vertices + 3;
 
+#define COPY_TEXCOORD(t, texcoords); \
+    texcoords[0] = t[0];             \
+    texcoords[1] = t[1];             \
+    texcoords = texcoords + 2;
+
 /*
  * Update the camera's position based on by current input.
  *
@@ -69,7 +74,7 @@ int main()
     GLuint vertex_array;
     GLuint block_shaders_id;
     GLuint vertex_buffer_id;
-    GLuint color_buffer_id;
+    GLuint texcoords_buffer_id;
     GLuint matrix_id;
     Block* blocks[7]; // NULL-term'd array of pointers to each block
     Block* block_cursor;
@@ -145,9 +150,9 @@ int main()
     glGenVertexArrays(1, &vertex_array);
     glBindVertexArray(vertex_array);
 
-    // create the vertex and color buffers for the blocks
+    // create the vertex and texcoords buffers for the blocks
     glGenBuffers(1, &vertex_buffer_id);
-    glGenBuffers(1, &color_buffer_id);
+    glGenBuffers(1, &texcoords_buffer_id);
 
     // load/use shaders
     block_shaders_id = load_program(BLOCK_VERTEX_SHADER_PATH,
@@ -167,7 +172,7 @@ int main()
     // load texture atlas into GPU buffer
     glGenTextures(1, &texture_atlas_id);
     glBindTexture(GL_TEXTURE_2D, texture_atlas_id);
-    glActiveTexture(GL_TEXTURE_0);
+    glActiveTexture(GL_TEXTURE0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, // target
 		0, // level, 0 = base, no minimap,
@@ -210,20 +215,24 @@ int main()
 
             // buffer the block's vertices
             glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
-            glBufferData(GL_ARRAY_BUFFER, block_cursor->vertex_data_size,
-                         block_cursor->vertex_data, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, block_cursor->vertices_size,
+                         block_cursor->vertices, GL_STATIC_DRAW);
             // describe the layout of the vertex buffer
-            glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
             glEnableVertexAttribArray(0);
+            // vertices are in attrib list 0
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-            // buffer the block's colors
-            glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
-            glBufferData(GL_ARRAY_BUFFER, block_cursor->color_data_size,
-                         block_cursor->color_data, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+            // buffer the block's texcoords
+            glBindBuffer(GL_ARRAY_BUFFER, texcoords_buffer_id);
+            glBufferData(GL_ARRAY_BUFFER, block_cursor->texcoords_size,
+                         block_cursor->texcoords, GL_STATIC_DRAW);
             // describe the layout of the color buffer
-            glBindBuffer(GL_ARRAY_BUFFER, color_buffer_id);
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            // texcoords are in attrib list 1
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+
             // draw the block
             glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
             glDisableVertexAttribArray(0);
@@ -343,7 +352,6 @@ void comp_block_vertex_data(const int* a, float* vertex_data)
 {
     // TODO use VBO indexing
     // see project notebook p.9 for drawings. Transfer in when finalized.
-    const int vertex_data_size = 108;
     const int b[3] = {a[0]+1, a[1]  , a[2]  };
     const int c[3] = {a[0]  , a[1]  , a[2]+1};
     const int d[3] = {a[0]+1, a[1]  , a[2]+1};
@@ -398,5 +406,51 @@ void comp_block_vertex_data(const int* a, float* vertex_data)
 
 void comp_block_texture_data(float* texture_data)
 {
-    texcoords[0]
+    // see projects notebook p.9 for drawings. Transfer in when finalized.
+    const float a[2] = {0.0f, 0.0f};
+    const float b[2] = {1.0f, 0.0f};
+    const float c[2] = {0.0f, 1.0f};
+    const float d[2] = {1.0f, 1.0f};
+
+    COPY_TEXCOORD(a, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(d, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+
+    COPY_TEXCOORD(a, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(d, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+
+    COPY_TEXCOORD(a, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(d, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+
+    COPY_TEXCOORD(a, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(d, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+
+    COPY_TEXCOORD(a, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(d, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+
+    COPY_TEXCOORD(a, texture_data);
+    COPY_TEXCOORD(b, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(d, texture_data);
+    COPY_TEXCOORD(c, texture_data);
+    COPY_TEXCOORD(b, texture_data);
 }
