@@ -1,5 +1,5 @@
-Dependencies: cmake libgl1-mesa-dev xorg-dev libglu1-mesa-dev libglfw3-dev
-
+This program only depends on GLEW and GLFW and OpenGL drivers.
+`sudo apt-get install -y libglew-dev libglfw3-dev xorg-dev`
 
 
 === Credits ===
