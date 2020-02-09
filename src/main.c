@@ -1,11 +1,13 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include "util.h"
 #include "matrix.h"
-#include "lodepng.h"
+#include "../deps/lodepng/lodepng.h"
 
 #define WIDTH 1024
 #define HEIGHT 768
