@@ -175,16 +175,10 @@ int main()
     glGenTextures(1, &texture_atlas_id);
     glBindTexture(GL_TEXTURE_2D, texture_atlas_id);
     glActiveTexture(GL_TEXTURE0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, // target
-		0, // level, 0 = base, no minimap,
-		GL_RGBA, // internalformat
-        width,
-        height,
-		0, // border, always 0 in OpenGL ES
-		GL_RGBA, // format
-		GL_UNSIGNED_BYTE, // type
-        atlas_image);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+        GL_UNSIGNED_BYTE, atlas_image);
     free(atlas_image);
 
     // bind shader inputs
@@ -405,10 +399,10 @@ void comp_block_vertex_data(const int* a, float* vertex_data)
 void comp_block_texture_data(float* texture_data)
 {
     // see projects notebook p.9 for drawings. Transfer in when finalized.
-    const float a[2] = {0.0f, 0.0f};
-    const float b[2] = {1.0f, 0.0f};
-    const float c[2] = {0.0f, 1.0f};
-    const float d[2] = {1.0f, 1.0f};
+    const float a[2] = {0.0f, 0.8750f}; // topleft
+    const float b[2] = {0.0625f, 0.8750f}; // topright
+    const float c[2] = {0.0f, 0.9375f}; // bottomleft
+    const float d[2] = {0.0625f, 0.9375f}; // bottomright
 
     COPY_TEXCOORD(a, texture_data);
     COPY_TEXCOORD(b, texture_data);
