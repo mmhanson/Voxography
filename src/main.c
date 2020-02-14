@@ -33,8 +33,10 @@
     texcoords[1] = t[1];             \
     texcoords = texcoords + 2;
 
+
 typedef struct BlockTag
 {
+    GLuint VAO_id;
     GLfloat* vertices; // array of 108 floats (36 points)
     GLfloat* texcoords; // texture (u,v) coordinates into texture atlas
     size_t vertices_size;
@@ -163,7 +165,8 @@ int main()
     }
 
     // gameloop
-    do
+    while (glfwGetKey(w, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+           glfwWindowShouldClose(w) == 0)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -202,8 +205,6 @@ int main()
         glfwSwapBuffers(w);
         glfwPollEvents();
     }
-    while (glfwGetKey(w, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-           glfwWindowShouldClose(w) == 0);
 }
 
 void update_camera(float* p, float* rx, float* ry)
@@ -435,6 +436,10 @@ Block* construct_block(int x, int y, int z)
 
     comp_block_vertex_data(a, new_block->vertices);
     comp_block_texture_data(new_block->texcoords);
+
+    glGenVertexArrays(1, &(new_block->VAO_id));
+    glBindVertexArray(new_block->VAO_id);
+    glBindVertexArray(0);
 
     return new_block;
 }
