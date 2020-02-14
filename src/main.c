@@ -33,6 +33,14 @@
     texcoords[1] = t[1];             \
     texcoords = texcoords + 2;
 
+typedef struct BlockTag
+{
+    GLfloat* vertices; // array of 108 floats (36 points)
+    GLfloat* texcoords; // texture (u,v) coordinates into texture atlas
+    size_t vertices_size;
+    size_t texcoords_size;
+} Block;
+
 /*
  * Update the camera's position based on by current input.
  *
@@ -61,15 +69,15 @@ void comp_block_vertex_data(const int* a, float* vertex_data);
  */
 void comp_block_texture_data(float* texture_data);
 
-GLFWwindow* w;
+/*
+ * Construct a block object.
+ *
+ * @x, @y, @z: create coordinate of corner most in the z-, y+, x- direction.
+ *   designate 'corner a' of the block.
+ */
+Block* construct_block(int x, int y, int z);
 
-typedef struct BlockTag
-{
-    GLfloat* vertices; // array of 108 floats (36 points)
-    GLfloat* texcoords; // texture (u,v) coordinates
-    size_t vertices_size;
-    size_t texcoords_size;
-} Block;
+GLFWwindow* w;
 
 int main()
 {
@@ -87,22 +95,9 @@ int main()
     unsigned char* atlas_image;
     unsigned int width;
     unsigned int height;
-    GLuint texture_id;
     GLuint texture_atlas_id;
-    GLint uniform_mytexture;
     GLint attrib_texcoord;
     GLuint attrib_position;
-
-    static GLfloat block0_vertex_data[108]; // array of vtxs for one block
-    static GLfloat block1_vertex_data[108];
-    static GLfloat block2_vertex_data[108];
-    static GLfloat block3_vertex_data[108];
-    static GLfloat block4_vertex_data[108];
-    static GLfloat block5_vertex_data[108];
-    static GLfloat block6_vertex_data[108];
-    static GLfloat block7_vertex_data[108];
-
-    static GLfloat block_texture_data[72]; // array of texcoords for each block
 
     // camera information
     float matrix[16];
@@ -113,39 +108,13 @@ int main()
 
     init_opengl();
 
-    comp_block_texture_data(block_texture_data);
-    // MAKE THE BLOCKS (hardcoded) //
-    const int block0_coord[3] = {0, 0, 0};
-    Block block0 = {block0_vertex_data, block_texture_data,
-                    sizeof(block0_vertex_data), sizeof(block_texture_data)};
-    comp_block_vertex_data(block0_coord, block0_vertex_data);
-    const int block1_coord[3] = {1, 0, 0};
-    Block block1 = {block1_vertex_data, block_texture_data,
-                    sizeof(block1_vertex_data), sizeof(block_texture_data)};
-    comp_block_vertex_data(block1_coord, block1_vertex_data);
-    const int block2_coord[3] = {0, 0, -1};
-    Block block2 = {block2_vertex_data, block_texture_data,
-                    sizeof(block2_vertex_data), sizeof(block_texture_data)};
-    comp_block_vertex_data(block2_coord, block2_vertex_data);
-    const int block3_coord[3] = {0, 0, 1};
-    Block block3 = {block3_vertex_data, block_texture_data,
-                    sizeof(block3_vertex_data), sizeof(block_texture_data)};
-    comp_block_vertex_data(block3_coord, block3_vertex_data);
-    const int block4_coord[3] = {-1, 0, 0};
-    Block block4 = {block4_vertex_data, block_texture_data,
-                    sizeof(block4_vertex_data), sizeof(block_texture_data)};
-    comp_block_vertex_data(block4_coord, block4_vertex_data);
-    const int block5_coord[3] = {0, 1, 0};
-    Block block5 = {block5_vertex_data, block_texture_data,
-                    sizeof(block5_vertex_data), sizeof(block_texture_data)};
-    comp_block_vertex_data(block5_coord, block5_vertex_data);
     // put in array
-    blocks[0] = &block0;
-    blocks[1] = &block1;
-    blocks[2] = &block2;
-    blocks[3] = &block3;
-    blocks[4] = &block4;
-    blocks[5] = &block5;
+    blocks[0] = construct_block(0, 0, 0);
+    blocks[1] = construct_block(1, 0, 0);
+    blocks[2] = construct_block(0, 0, -1);
+    blocks[3] = construct_block(0, 0, 1);
+    blocks[4] = construct_block(-1, 0, 0);
+    blocks[5] = construct_block(0, 1, 0);
     blocks[6] = NULL;
 
     // create VAO
@@ -445,4 +414,27 @@ void comp_block_texture_data(float* texture_data)
     COPY_TEXCOORD(d, texture_data);
     COPY_TEXCOORD(c, texture_data);
     COPY_TEXCOORD(b, texture_data);
+}
+
+Block* construct_block(int x, int y, int z)
+{
+    const size_t vertex_data_size = 108 * sizeof(GLfloat);
+    const size_t texture_data_size = 72 * sizeof(GLfloat);
+    Block* new_block;
+    int a[3];
+
+    a[0] = x;
+    a[1] = y;
+    a[2] = z;
+
+    new_block = malloc(sizeof(Block));
+    new_block->vertices = malloc(vertex_data_size);
+    new_block->vertices_size = vertex_data_size;
+    new_block->texcoords = malloc(texture_data_size);
+    new_block->texcoords_size = texture_data_size;
+
+    comp_block_vertex_data(a, new_block->vertices);
+    comp_block_texture_data(new_block->texcoords);
+
+    return new_block;
 }
