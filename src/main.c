@@ -87,10 +87,7 @@ GLint position_attrib_idx;
 
 int main()
 {
-    GLuint vertex_array;
     GLuint block_shaders_id;
-    GLuint vertex_buffer_id;
-    GLuint texcoords_buffer_id;
     GLuint matrix_id;
     Block* blocks[7]; // NULL-term'd array of pointers to each block
     Block* block_cursor;
@@ -112,6 +109,24 @@ int main()
 
     init_opengl();
 
+    // load/use shaders
+    block_shaders_id = load_program(BLOCK_VERTEX_SHADER_PATH,
+                                    BLOCK_FRAGMENT_SHADER_PATH);
+    glUseProgram(block_shaders_id);
+    matrix_id = glGetUniformLocation(block_shaders_id, MATRIX_SHADER_NAME);
+
+    // bind shader inputs
+    texcoord_attrib_idx = glGetAttribLocation(block_shaders_id, "texcoord");
+    if (texcoord_attrib_idx == -1)
+    {
+        fprintf(stderr, "Could not bind attribute 'texcoord'.\n");
+    }
+    position_attrib_idx = glGetAttribLocation(block_shaders_id, "position");
+    if (position_attrib_idx == -1)
+    {
+        fprintf(stderr, "Couldn't bind attrib 'position' to shaders.\n");
+    }
+
     // put in array
     blocks[0] = construct_block(0, 0, 0);
     blocks[1] = construct_block(1, 0, 0);
@@ -120,20 +135,6 @@ int main()
     blocks[4] = construct_block(-1, 0, 0);
     blocks[5] = construct_block(0, 1, 0);
     blocks[6] = NULL;
-
-    // create VAO
-    glGenVertexArrays(1, &vertex_array);
-    glBindVertexArray(vertex_array);
-
-    // create the vertex and texcoords buffers for the blocks
-    glGenBuffers(1, &vertex_buffer_id);
-    glGenBuffers(1, &texcoords_buffer_id);
-
-    // load/use shaders
-    block_shaders_id = load_program(BLOCK_VERTEX_SHADER_PATH,
-                                    BLOCK_FRAGMENT_SHADER_PATH);
-    glUseProgram(block_shaders_id);
-    matrix_id = glGetUniformLocation(block_shaders_id, MATRIX_SHADER_NAME);
 
     // load texture atlas into memory
     error = lodepng_decode32_file(&atlas_image, &width, &height, TEXTURE_ATLAS_PATH);
@@ -154,18 +155,6 @@ int main()
         GL_UNSIGNED_BYTE, atlas_image);
     free(atlas_image);
 
-    // bind shader inputs
-    texcoord_attrib_idx = glGetAttribLocation(block_shaders_id, "texcoord");
-    if (texcoord_attrib_idx == -1)
-    {
-        fprintf(stderr, "Could not bind attribute 'texcoord'.\n");
-    }
-    position_attrib_idx = glGetAttribLocation(block_shaders_id, "position");
-    if (position_attrib_idx == -1)
-    {
-        fprintf(stderr, "Couldn't bind attrib 'position' to shaders.\n");
-    }
-
     // gameloop
     while (glfwGetKey(w, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(w) == 0)
@@ -183,24 +172,12 @@ int main()
         {
             block_cursor = blocks[idx];
 
-            // buffer block vertices into VAO
-            glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
-            glBufferData(GL_ARRAY_BUFFER, block_cursor->vertices_size,
-                         block_cursor->vertices, GL_STATIC_DRAW); // load block_cursor->vertices into vertex_buffer_id's VBO
-            glVertexAttribPointer(position_attrib_idx, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // make VAO's 'position' attribute point to VBO above
-            glEnableVertexAttribArray(position_attrib_idx); // enable the new VAO attribute
-            glBindBuffer(GL_ARRAY_BUFFER, 0); // unbind VBO
-
-            // buffer block texcoords into VAO
-            glBindBuffer(GL_ARRAY_BUFFER, texcoords_buffer_id);
-            glBufferData(GL_ARRAY_BUFFER, block_cursor->texcoords_size,
-                         block_cursor->texcoords, GL_STATIC_DRAW);
-            glVertexAttribPointer(texcoord_attrib_idx, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-            glEnableVertexAttribArray(texcoord_attrib_idx);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
             // draw the block
+            glBindVertexArray(block_cursor->VAO_id);
+            glEnableVertexAttribArray(position_attrib_idx); // enable the new VAO attribute
+            glEnableVertexAttribArray(texcoord_attrib_idx); // enable the new VAO attribute
             glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
+            glBindVertexArray(0);
             glDisableVertexAttribArray(0);
         }
 
@@ -448,7 +425,6 @@ Block* construct_block(int x, int y, int z)
     glBufferData(GL_ARRAY_BUFFER, new_block->vertices_size,
                  new_block->vertices, GL_STATIC_DRAW); // load block's vertices into block's VBO
     glVertexAttribPointer(position_attrib_idx, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // make VAO's 'position' attribute point to VBO above
-    glEnableVertexAttribArray(position_attrib_idx); // enable the new VAO attribute
 
     // buffer texture coordinates
     glGenBuffers(1, &new_block->texcoords_buffer_id);
@@ -456,9 +432,13 @@ Block* construct_block(int x, int y, int z)
     glBufferData(GL_ARRAY_BUFFER, new_block->texcoords_size,
                  new_block->texcoords, GL_STATIC_DRAW);
     glVertexAttribPointer(texcoord_attrib_idx, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glEnableVertexAttribArray(position_attrib_idx); // enable the new VAO attribute
     glEnableVertexAttribArray(texcoord_attrib_idx);
 
+    glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
     return new_block;
 }
