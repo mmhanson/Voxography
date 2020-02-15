@@ -39,10 +39,6 @@ typedef struct BlockTag
     GLuint VAO_id;
     GLuint VBO_id;
     GLuint texcoords_buffer_id;
-    GLfloat* vertices; // array of 108 floats (36 points)
-    GLfloat* texcoords; // texture (u,v) coordinates into texture atlas
-    size_t vertices_size;
-    size_t texcoords_size;
 } Block;
 
 /*
@@ -393,8 +389,10 @@ void comp_block_texture_data(float* texture_data)
 
 Block* construct_block(int x, int y, int z)
 {
-    const size_t vertex_data_size = 108 * sizeof(GLfloat);
-    const size_t texture_data_size = 72 * sizeof(GLfloat);
+    const size_t vertices_size = 108 * sizeof(GLfloat);
+    const size_t texcoords_size = 72 * sizeof(GLfloat);
+    GLfloat vertices[108]; // array of 108 floats (36 points)
+    GLfloat texcoords[72]; // texture (u,v) coordinates into texture atlas
     Block* new_block;
     int a[3];
 
@@ -403,32 +401,26 @@ Block* construct_block(int x, int y, int z)
     a[2] = z;
 
     new_block = malloc(sizeof(Block));
-    new_block->vertices = malloc(vertex_data_size);
-    new_block->vertices_size = vertex_data_size;
-    new_block->texcoords = malloc(texture_data_size);
-    new_block->texcoords_size = texture_data_size;
 
-    comp_block_vertex_data(a, new_block->vertices);
-    comp_block_texture_data(new_block->texcoords);
+    comp_block_vertex_data(a, vertices);
+    comp_block_texture_data(texcoords);
 
     glGenVertexArrays(1, &(new_block->VAO_id));
     glBindVertexArray(new_block->VAO_id);
 
-    // buffer vertex data into block's VBO
+    // buffer vertex data into VBO
     glGenBuffers(1, &new_block->VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, new_block->VBO_id);
-    glBufferData(GL_ARRAY_BUFFER, new_block->vertices_size,
-                 new_block->vertices, GL_STATIC_DRAW); // load block's vertices into block's VBO
-    glVertexAttribPointer(position_attrib_idx, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); // make VAO's 'position' attribute point to VBO above
+    glBufferData(GL_ARRAY_BUFFER, vertices_size, vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(position_attrib_idx, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    // buffer texture coordinates
+    // buffer texture coordinate data
     glGenBuffers(1, &new_block->texcoords_buffer_id);
     glBindBuffer(GL_ARRAY_BUFFER, new_block->texcoords_buffer_id);
-    glBufferData(GL_ARRAY_BUFFER, new_block->texcoords_size,
-                 new_block->texcoords, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, texcoords_size, texcoords, GL_STATIC_DRAW);
     glVertexAttribPointer(texcoord_attrib_idx, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    glEnableVertexAttribArray(position_attrib_idx); // enable the new VAO attribute
+    glEnableVertexAttribArray(position_attrib_idx);
     glEnableVertexAttribArray(texcoord_attrib_idx);
 
     glEnableVertexAttribArray(0);
