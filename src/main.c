@@ -127,15 +127,6 @@ int main()
         fprintf(stderr, "Couldn't bind attrib 'position' to shaders.\n");
     }
 
-    // put in array
-    blocks[0] = construct_block(0, 0, 0);
-    blocks[1] = construct_block(1, 0, 0);
-    blocks[2] = construct_block(0, 0, -1);
-    blocks[3] = construct_block(0, 0, 1);
-    blocks[4] = construct_block(-1, 0, 0);
-    blocks[5] = construct_block(0, 1, 0);
-    blocks[6] = NULL;
-
     // load texture atlas into memory
     error = lodepng_decode32_file(&atlas_image, &width, &height, TEXTURE_ATLAS_PATH);
     if (error)
@@ -155,6 +146,15 @@ int main()
         GL_UNSIGNED_BYTE, atlas_image);
     free(atlas_image);
 
+    // create blocks
+    blocks[0] = construct_block(0, 0, 0);
+    blocks[1] = construct_block(1, 0, 0);
+    blocks[2] = construct_block(0, 0, -1);
+    blocks[3] = construct_block(0, 0, 1);
+    blocks[4] = construct_block(-1, 0, 0);
+    blocks[5] = construct_block(0, 1, 0);
+    blocks[6] = NULL;
+
     // gameloop
     while (glfwGetKey(w, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(w) == 0)
@@ -171,14 +171,9 @@ int main()
         for (idx = 0; blocks[idx] != NULL; idx++)
         {
             block_cursor = blocks[idx];
-
-            // draw the block
             glBindVertexArray(block_cursor->VAO_id);
-            glEnableVertexAttribArray(position_attrib_idx); // enable the new VAO attribute
-            glEnableVertexAttribArray(texcoord_attrib_idx); // enable the new VAO attribute
             glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
             glBindVertexArray(0);
-            glDisableVertexAttribArray(0);
         }
 
         glfwSwapBuffers(w);
