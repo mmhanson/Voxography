@@ -1,3 +1,15 @@
+/*
+ * Directions/coordinates:
+ *   North: z+
+ *   South: z-
+ *   East: x-
+ *   West: x+
+ *   Up: y+
+ *   Down: y-
+ *
+ * Written by Max Hanson, November 2019 -> _
+ */
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +33,8 @@
 #define TEXTURE_ATLAS_PATH "./assets/textures/texture_atlas.png"
 // 12 triangles, 3 vtxs each -> 36 vtxs
 #define VTXS_PER_BLOCK 36
+#define CHUNK_SIZE 16 // 1 chunk: 16x16x16 blocks
+#define HUNK_SIZE 16 // 1 hunk: 16x16x16 chunks
 
 #define COPY_VERTEX(v, vertices);            \
     vertices[0] = v[0];                      \
@@ -40,6 +54,11 @@ typedef struct BlockTag
     GLuint vertex_buffer_id;
     GLuint texcoord_buffer_id;
 } Block;
+
+typedef struct ChunkTag
+{
+    Block* blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+} Chunk;
 
 /*
  * Update the camera's position based on by current input.
@@ -72,10 +91,24 @@ void comp_block_texture_data(float* texture_data);
 /*
  * Construct a block object.
  *
- * @x, @y, @z: create coordinate of corner most in the z-, y+, x- direction.
- *   designate 'corner a' of the block.
+ * @x, @y, @z: coordinate of top-northeast corner of the block.
  */
 Block* construct_block(int x, int y, int z);
+
+/*
+ * Construct a chunk object.
+ *
+ * @x, @y, @z: coordinate of top-northeast corner of chunk.
+ */
+Chunk* construct_chunk(int x, int y, int z);
+
+/*
+ * Add a block to a chunk.
+ *
+ * @dx, @dy, @dz: relative coordinates of the block from top-northeast corner
+ *   of the chunk.
+ */
+void add_block(Chunk* chunk, Block* block, int dx, int dy, int dz);
 
 GLFWwindow* w;
 GLint texcoord_attrib_idx;
@@ -284,13 +317,14 @@ void comp_block_vertex_data(const int* a, float* vertex_data)
 {
     // TODO use VBO indexing
     // see project notebook p.9 for drawings. Transfer in when finalized.
+
     const int b[3] = {a[0]+1, a[1]  , a[2]  };
-    const int c[3] = {a[0]  , a[1]  , a[2]+1};
-    const int d[3] = {a[0]+1, a[1]  , a[2]+1};
+    const int c[3] = {a[0]  , a[1]  , a[2]-1};
+    const int d[3] = {a[0]+1, a[1]  , a[2]-1};
     const int e[3] = {a[0]  , a[1]-1, a[2]  };
     const int f[3] = {a[0]+1, a[1]-1, a[2]  };
-    const int g[3] = {a[0]  , a[1]-1, a[2]+1};
-    const int h[3] = {a[0]+1, a[1]-1, a[2]+1};
+    const int g[3] = {a[0]  , a[1]-1, a[2]-1};
+    const int h[3] = {a[0]+1, a[1]-1, a[2]-1};
 
     // face 1
     COPY_VERTEX(b, vertex_data); // b-a-f
@@ -428,4 +462,33 @@ Block* construct_block(int x, int y, int z)
     glBindVertexArray(0);
 
     return new_block;
+}
+
+Chunk* construct_chunk(int x, int y, int z)
+{
+    Chunk* new_chunk;
+    int x_idx;
+    int y_idx;
+    int z_idx;
+
+    new_chunk = malloc(sizeof(Chunk));
+
+    // init all blocks to null
+    for (x_idx = 0; x_idx < CHUNK_SIZE; x_idx++)
+    {
+        for (y_idx = 0; y_idx < CHUNK_SIZE; y_idx++)
+        {
+            for (z_idx = 0; z_idx < CHUNK_SIZE; z_idx++)
+            {
+                (new_chunk->blocks)[x_idx][y_idx][z_idx] = 0; // nullify
+            }
+        }
+    }
+
+    return new_chunk;
+}
+
+void add_block(Chunk* chunk, Block* block, int dx, int dy, int dz)
+{
+    (chunk->blocks)[dx][dy][dz] = block;
 }
