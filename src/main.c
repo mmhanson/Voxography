@@ -36,9 +36,9 @@
 
 typedef struct BlockTag
 {
-    GLuint VAO_id;
-    GLuint VBO_id;
-    GLuint texcoords_buffer_id;
+    GLuint vertex_array_id;
+    GLuint vertex_buffer_id;
+    GLuint texcoord_buffer_id;
 } Block;
 
 /*
@@ -167,7 +167,7 @@ int main()
         for (idx = 0; blocks[idx] != NULL; idx++)
         {
             block_cursor = blocks[idx];
-            glBindVertexArray(block_cursor->VAO_id);
+            glBindVertexArray(block_cursor->vertex_array_id);
             glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
             glBindVertexArray(0);
         }
@@ -405,18 +405,18 @@ Block* construct_block(int x, int y, int z)
     comp_block_vertex_data(a, vertices);
     comp_block_texture_data(texcoords);
 
-    glGenVertexArrays(1, &(new_block->VAO_id));
-    glBindVertexArray(new_block->VAO_id);
+    glGenVertexArrays(1, &(new_block->vertex_array_id));
+    glBindVertexArray(new_block->vertex_array_id);
 
     // buffer vertex data into VBO
-    glGenBuffers(1, &new_block->VBO_id);
-    glBindBuffer(GL_ARRAY_BUFFER, new_block->VBO_id);
+    glGenBuffers(1, &new_block->vertex_buffer_id);
+    glBindBuffer(GL_ARRAY_BUFFER, new_block->vertex_buffer_id);
     glBufferData(GL_ARRAY_BUFFER, vertices_size, vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(position_attrib_idx, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     // buffer texture coordinate data
-    glGenBuffers(1, &new_block->texcoords_buffer_id);
-    glBindBuffer(GL_ARRAY_BUFFER, new_block->texcoords_buffer_id);
+    glGenBuffers(1, &new_block->texcoord_buffer_id);
+    glBindBuffer(GL_ARRAY_BUFFER, new_block->texcoord_buffer_id);
     glBufferData(GL_ARRAY_BUFFER, texcoords_size, texcoords, GL_STATIC_DRAW);
     glVertexAttribPointer(texcoord_attrib_idx, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
