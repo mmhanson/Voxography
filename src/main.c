@@ -257,7 +257,7 @@ void init_opengl()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MIN_MINOR_VERSION);
 
     // create window
-    w = glfwCreateWindow(WIDTH, HEIGHT, "My Window", 0, 0);
+    w = glfwCreateWindow(WIDTH, HEIGHT, "Voxography", 0, 0);
     if (!w)
     {
         fprintf(stderr, "Failed to create window.\n");
