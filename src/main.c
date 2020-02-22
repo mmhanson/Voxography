@@ -41,6 +41,13 @@ typedef struct BlockTag
     GLuint texcoord_buffer_id;
 } Block;
 
+typedef struct ChunkTag
+{
+    // see notebook p. 30 drawings
+    Block* blocks[16][16][16]; // array of blocks. Starts at a
+    int a[3]; // coord of main corner (top, northeast)
+} Chunk;
+
 /*
  * Update the camera's position based on by current input.
  *
@@ -85,9 +92,8 @@ int main()
 {
     GLuint block_shaders_id;
     GLuint matrix_id;
-    Block* blocks[7]; // NULL-term'd array of pointers to each block
+    Chunk chunk;
     Block* block_cursor;
-    int idx;
 
     // textures
     int error;
@@ -142,14 +148,18 @@ int main()
         GL_UNSIGNED_BYTE, atlas_image);
     free(atlas_image);
 
-    // create blocks
-    blocks[0] = construct_block(0, 0, 0);
-    blocks[1] = construct_block(1, 0, 0);
-    blocks[2] = construct_block(0, 0, -1);
-    blocks[3] = construct_block(0, 0, 1);
-    blocks[4] = construct_block(-1, 0, 0);
-    blocks[5] = construct_block(0, 1, 0);
-    blocks[6] = NULL;
+    // create chunk
+    for (int i = 0; i < 16; i++)
+    {
+        for (int j = 0; j < 16; j++)
+        {
+            for (int k = 0; k < 16; k++)
+            {
+                chunk.blocks[i][j][k] = NULL;
+            }
+        }
+    }
+    chunk.blocks[0][0][15] = construct_block(0, 0, 0);
 
     // gameloop
     while (glfwGetKey(w, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
@@ -164,12 +174,21 @@ int main()
         glUniformMatrix4fv(matrix_id, 1, GL_FALSE, matrix);
 
         // DRAW EACH BLOCK //
-        for (idx = 0; blocks[idx] != NULL; idx++)
+        for (int i = 0; i < 16; i++)
         {
-            block_cursor = blocks[idx];
-            glBindVertexArray(block_cursor->vertex_array_id);
-            glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
-            glBindVertexArray(0);
+            for (int j = 0; j < 16; j++)
+            {
+                for (int k = 0; k < 16; k++)
+                {
+                    block_cursor = chunk.blocks[i][j][k];
+                    if (block_cursor != NULL)
+                    {
+                        glBindVertexArray(block_cursor->vertex_array_id);
+                        glDrawArrays(GL_TRIANGLES, 0, VTXS_PER_BLOCK);
+                        glBindVertexArray(0);
+                    }
+                }
+            }
         }
 
         glfwSwapBuffers(w);
@@ -284,13 +303,14 @@ void comp_block_vertex_data(const int* a, float* vertex_data)
 {
     // TODO use VBO indexing
     // see project notebook p.9 for drawings. Transfer in when finalized.
+
     const int b[3] = {a[0]+1, a[1]  , a[2]  };
-    const int c[3] = {a[0]  , a[1]  , a[2]+1};
-    const int d[3] = {a[0]+1, a[1]  , a[2]+1};
+    const int c[3] = {a[0]  , a[1]  , a[2]-1};
+    const int d[3] = {a[0]+1, a[1]  , a[2]-1};
     const int e[3] = {a[0]  , a[1]-1, a[2]  };
     const int f[3] = {a[0]+1, a[1]-1, a[2]  };
-    const int g[3] = {a[0]  , a[1]-1, a[2]+1};
-    const int h[3] = {a[0]+1, a[1]-1, a[2]+1};
+    const int g[3] = {a[0]  , a[1]-1, a[2]-1};
+    const int h[3] = {a[0]+1, a[1]-1, a[2]-1};
 
     // face 1
     COPY_VERTEX(b, vertex_data); // b-a-f
@@ -386,6 +406,8 @@ void comp_block_texture_data(float* texture_data)
     COPY_TEXCOORD(c, texture_data);
     COPY_TEXCOORD(b, texture_data);
 }
+
+void comp_chunk_vertex_data();
 
 Block* construct_block(int x, int y, int z)
 {
