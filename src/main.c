@@ -9,6 +9,8 @@
 #include "matrix.h"
 #include "../deps/lodepng/lodepng.h"
 
+#define WIREFRAME 1 // set to '1' to draw blocks as a wireframe
+
 #define WIDTH 1024
 #define HEIGHT 768
 #define MIN_MAJOR_VERSION 3
@@ -159,7 +161,10 @@ int main()
             }
         }
     }
+    // NOTE: block coordinates are independent of chunk coordinates. Right now chunk coordinates
+    // are not used, but block coordinates are manually lined up with chunk coordinates.
     chunk.blocks[0][0][15] = construct_block(0, 0, 0);
+    chunk.blocks[1][0][15] = construct_block(1, 0, 0);
 
     // gameloop
     while (glfwGetKey(w, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
@@ -181,6 +186,10 @@ int main()
                 for (int k = 0; k < 16; k++)
                 {
                     block_cursor = chunk.blocks[i][j][k];
+                    if (WIREFRAME)
+                    {
+                        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                    }
                     if (block_cursor != NULL)
                     {
                         glBindVertexArray(block_cursor->vertex_array_id);
